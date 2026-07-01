@@ -1,0 +1,14 @@
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+
+@theme {
+  --color-surface: #222222;
+  --color-background: #1e1e1e;
+  --color-muted: #414141;
+  --color-brand: #eb6822;
+
+  --font-mono: 'JetBrains Mono Variable', monospace;
+
+  --text-1\.5: 1.375rem;
+  --text-2\.5: 1.6875rem;
+}

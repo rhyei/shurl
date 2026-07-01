@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"]
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  }
+}

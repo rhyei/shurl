@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'containers'
+    static_configs:
+      - targets: ['containers:9713']
+
+    metric_relabel_configs:
+      - source_labels: [name]
+        regex: 'shurl-.*'
+        action: keep

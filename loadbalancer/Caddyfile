@@ -1,0 +1,18 @@
+http://localhost:80, http://:80 {
+    @backend_nodes {
+        path /api/* /g/*
+    }
+    reverse_proxy @backend_nodes {
+        to backend:3000
+
+        transport http {
+            keepalive 5s
+        }
+    }
+
+    reverse_proxy * frontend:80 {
+        transport http {
+            keepalive 5s
+        }
+    }
+}
