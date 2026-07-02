@@ -11,6 +11,8 @@ RUN pnpm i --frozen-lockfile --ignore-scripts
 
 COPY backend ./backend
 
+RUN mkdir -p /app/geo && cd backend && node ./scripts/update-geo-db.ts
+
 FROM oven/bun:1.3.14-slim AS builder
 WORKDIR /app
 
@@ -25,6 +27,7 @@ WORKDIR /app
 
 COPY --from=builder /app/backend/dist/scripts/init.js ./init.js
 COPY --from=builder /app/backend/drizzle ./drizzle
+COPY --from=builder /app/backend/clickhouse ./clickhouse
 
 CMD ["bun", "init.js"]
 
@@ -32,6 +35,11 @@ FROM oven/bun:1.3.14-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/backend/dist/src/index.js ./index.js
+COPY --from=deps /app/geo ./geo
+
+ENV ILA_DATA_DIR=/app/geo
+ENV ILA_SKIP_INITIAL_RELOAD=true
+ENV ILA_AUTO_UPDATE=false
 
 ENV PORT=3000
 EXPOSE 3000

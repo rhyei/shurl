@@ -2,7 +2,7 @@ import type { RedisClient } from 'bun'
 
 import { createToken, Inject } from '@enshou/di'
 
-import type { CacheService } from '#/common/interfaces'
+import type { CacheService } from '#/common/interfaces/cache-service'
 
 import { REDIS } from '#/lib/redis'
 

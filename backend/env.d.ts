@@ -9,5 +9,8 @@ declare module 'bun' {
     ORIGIN: string
     GOOGLE_CLIENT_ID: string
     GOOGLE_CLIENT_SECRET: string
+    CLICKHOUSE_DB: string
+    CLICKHOUSE_USER: string
+    CLICKHOUSE_PASSWORD: string
   }
 }

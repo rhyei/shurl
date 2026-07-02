@@ -22,13 +22,11 @@ export class LoggerMiddleware implements Middleware {
     c.set('requestId', requestId)
     c.header(REQUEST_ID_HEADER, requestId)
 
-    this.logger.info(`${requestId} ${c.req.method} ${c.req.url}`)
-
     await withContext({ requestId }, async () => {
+      this.logger.info(`{requestId} ${c.req.method} ${c.req.url}`)
       await next()
+      const seconds = (Date.now() - time) / 1000
+      this.logger.info(`{requestId} ${c.req.method} ${c.req.url} ${c.res.status} ${seconds}s`)
     })
-
-    const seconds = (Date.now() - time) / 1000
-    this.logger.info(`${requestId} ${c.req.method} ${c.req.url} ${c.res.status} ${seconds}s`)
   }
 }

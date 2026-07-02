@@ -2,7 +2,12 @@ import type { ReactNode } from 'react'
 
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 
+import { client } from '../../generated/api/client.gen'
 import styles from '../styles.css?url'
+
+client.setConfig({
+  baseUrl: '/',
+})
 
 export const Route = createRootRoute({
   head: () => ({

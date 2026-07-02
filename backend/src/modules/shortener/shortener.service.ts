@@ -4,7 +4,8 @@ import { RestException } from '@enshou/core'
 import { createToken, Inject } from '@enshou/di'
 import { eq } from 'drizzle-orm'
 
-import type { CacheService, DynamicFilterService } from '#/common/interfaces'
+import type { CacheService } from '#/common/interfaces/cache-service'
+import type { DynamicFilterService } from '#/common/interfaces/dynamic-filter-service'
 import type { Db } from '#/database'
 
 import { CACHE_SERVICE } from '#/common/services/redis-cache-service'

@@ -3,11 +3,17 @@ packages:
   - 'frontend'
 
 catalog:
-  typescript: '^6.0.2'
+  typescript: '^6.0.3'
   '@types/bun': '^1.3.14'
-  valibot: '^1.4.1'
-  oxfmt: '^0.56.0'
+  valibot: '^1.4.2'
+  oxfmt: '^0.57.0'
 
 allowBuilds:
   esbuild: true
   simple-git-hooks: true
+
+minimumReleaseAgeExclude:
+  - '@enshou/core'
+  - '@enshou/di'
+  - '@enshou/openapi'
+  - '@enshou/valibot'

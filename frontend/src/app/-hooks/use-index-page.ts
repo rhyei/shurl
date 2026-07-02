@@ -20,7 +20,7 @@ export function useIndexPage() {
 
     const shortenResponse = await shortenMutation.mutateAsync({ url })
 
-    if (shortenResponse.error) urlField.setError(shortenResponse.error.error.name)
+    if (shortenResponse.error) urlField.setError(shortenResponse.error.error?.name)
     else urlField.setValue(shortenResponse.data.shortUrl)
   }
 

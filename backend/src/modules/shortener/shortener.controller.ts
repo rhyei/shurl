@@ -5,7 +5,8 @@ import { Inject } from '@enshou/di'
 import { ApiOperation, ApiTag } from '@enshou/openapi'
 import { validate } from '@enshou/valibot'
 
-import { ErrorResponse } from '#/common/schemas'
+import { ErrorResponse } from '#/common/schemas/error-response.schema'
+import { GO_EVENT_TRACKER_MIDDLEWARE } from '#/modules/shortener/middleware/go-event-tracker.middleware'
 
 import type { ShortenerService } from './shortener.service'
 
@@ -43,7 +44,7 @@ export class ShortenerController {
       404: { description: 'Shortened URL not found', schema: ErrorResponse },
     },
   })
-  @Use(...validate(GoSchema))
+  @Use(...validate(GoSchema), GO_EVENT_TRACKER_MIDDLEWARE)
   @Get('/g/:id')
   async go(c: Ctx<GoSchema>) {
     const { id } = c.req.valid('param')

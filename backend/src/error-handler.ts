@@ -1,6 +1,5 @@
-import type { ErrorHandler as EnshouErrorHandler } from '@enshou/core'
+import type { EnshouErrorHandler, HonoErrorHandler } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
-import type { ErrorHandler as HonoErrorHandler } from 'hono/types'
 
 import { RestException } from '@enshou/core'
 import { Inject } from '@enshou/di'
@@ -13,7 +12,7 @@ export class ErrorHandler implements EnshouErrorHandler {
 
   handle: HonoErrorHandler = (error, c) => {
     if (error instanceof RestException) return c.json({ error }, error.status)
-    this.logger.error('{requestId}', error)
+    this.logger.error('{requestId} {error}', { error })
     return RestException.InternalServerError().toHTTP().getResponse()
   }
 }

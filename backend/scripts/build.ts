@@ -1,13 +1,19 @@
-import { rm } from 'node:fs/promises'
+import { rmSync } from 'node:fs'
 
-await rm('./dist', { recursive: true, force: true })
+try {
+  rmSync('./dist', { recursive: true, force: true })
 
-void Bun.build({
-  entrypoints: ['./src/index.ts', './scripts/init.ts'],
-  outdir: './dist',
-  minify: true,
-  target: 'bun',
-  define: {
-    'Bun.env.NODE_ENV': JSON.stringify(Bun.env.NODE_ENV || 'production'),
-  },
-}).then(console.log)
+  const result = await Bun.build({
+    entrypoints: ['./src/index.ts', './scripts/init.ts'],
+    outdir: './dist',
+    minify: true,
+    target: 'bun',
+    define: {
+      'Bun.env.NODE_ENV': JSON.stringify(Bun.env.NODE_ENV || 'production'),
+    },
+  })
+  console.log(result)
+} catch (error) {
+  console.error('[Build] Failed:', error)
+  process.exit(1)
+}

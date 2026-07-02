@@ -1,0 +1,2 @@
+ALTER TABLE go_events
+ADD COLUMN is_bot UInt8 DEFAULT 0;
