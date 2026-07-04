@@ -6,12 +6,11 @@ import { ApiOperation, ApiTag } from '@enshou/openapi'
 import { validate } from '@enshou/valibot'
 
 import { ErrorResponse } from '#/common/schemas/error-response.schema'
-import { GO_EVENT_TRACKER_MIDDLEWARE } from '#/modules/shortener/middleware/go-event-tracker.middleware'
+import { GO_EVENT_TRACKER_MIDDLEWARE } from '#/modules/shortener/middleware'
 
 import type { ShortenerService } from './shortener.service'
 
-import { GoSchema } from './schemas/go.schema'
-import { ShortenSchema, ShortenResponse } from './schemas/shorten.schema'
+import { GoSchema, ShortenSchema, ShortenResponse } from './schemas'
 import { SHORTENER_SERVICE } from './shortener.service'
 
 @ApiTag('Shortener')
