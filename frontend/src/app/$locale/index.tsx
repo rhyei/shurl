@@ -5,53 +5,49 @@ import { Button } from '#/components/button'
 import { Input } from '#/components/input'
 import { Loader } from '#/components/loader'
 
-import { useIndexPage } from './-hooks'
+import { useShortenPage } from './-hooks'
 
 export const Route = createFileRoute('/$locale/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { state, mutations, functions, features } = useIndexPage()
+  const { state, mutations, functions, features } = useShortenPage()
 
   const { t } = useI18n()
 
   return (
-    <div className="mt-64 w-180 relative mx-auto flex flex-col">
-      <div className="gap-4 flex justify-between">
-        <Input
-          {...features.urlField.register()}
-          placeholder={t('input.shorten.placeholder')}
-          className="flex-1"
-        />
-
+    <div className="flex w-180 flex-col mx-auto pt-48">
+      <div className="grid grid-cols-[1fr_auto] gap-4">
+        <Input {...features.urlField.register()} placeholder={t('input.shorten.placeholder')} />
         <Button
           data-hidden={!state.isShortened}
           size="icon-lg"
-          className="ease-out transition-all duration-200 data-[hidden=true]:scale-0 data-[hidden=true]:opacity-0"
+          className="*:transition *:duration-150 *:ease-out data-[hidden=true]:scale-0 data-[hidden=true]:opacity-0 grid place-items-center *:col-start-1 *:row-start-1"
           onClick={functions.handleCopy}
         >
           <span
             data-copied={state.isCopied}
-            className="i-material-symbols-content-copy-outline-sharp text-brand ease-out absolute transition-all duration-200 data-[copied=true]:scale-50 data-[copied=true]:opacity-0"
+            className="i-material-symbols-content-copy-outline-sharp text-brand data-[copied=true]:scale-50 data-[copied=true]:opacity-0"
           />
           <span
             data-copied={state.isCopied}
-            className="i-material-symbols-check text-green-500 ease-out absolute scale-50 opacity-0 transition-all duration-200 data-[copied=true]:scale-100 data-[copied=true]:opacity-100"
+            className="i-material-symbols-check scale-50 text-success opacity-0 data-[copied=true]:scale-100 data-[copied=true]:opacity-100"
           />
         </Button>
       </div>
 
-      <div className="h-6 text-red-500 select-none">
-        {!!state.url && features.urlField.error && t(features.urlField.error)}
+      <div className="h-6 text-red-500">
+        {features.urlField.error && t(features.urlField.error)}
       </div>
+
       <Button
-        className="mt-32 w-48 self-end"
+        className="self-end mt-32 w-48"
         disabled={state.isShortenDisabled}
         onClick={functions.handleShorten}
       >
-        {state.isShortened && t('button.clear')}
-        {!state.isShortened && t('button.shorten')}
+        {!mutations.shorten.isLoading && state.isShortened && t('button.clear')}
+        {!mutations.shorten.isLoading && !state.isShortened && t('button.shorten')}
         {mutations.shorten.isLoading && <Loader />}
       </Button>
     </div>

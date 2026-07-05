@@ -1,8 +1,8 @@
-import { defineConfig, presetIcons, presetMini, presetWebFonts } from 'unocss'
+import { defineConfig, presetIcons, presetWebFonts, presetWind4 } from 'unocss'
 
 export default defineConfig({
   presets: [
-    presetMini(),
+    presetWind4(),
     presetIcons(),
     presetWebFonts({
       provider: 'google',
@@ -13,10 +13,13 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      surface: '#222222',
-      background: '#1e1e1e',
+      background: '#222222',
+      surface: '#1e1e1e',
+      foreground: '#e5e5e5',
       muted: '#414141',
       brand: '#eb6822',
+      success: '#22c55e',
+      selection: '#eb68223f',
     },
   },
 })

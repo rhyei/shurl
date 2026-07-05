@@ -44,7 +44,7 @@ function Root({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="m-0 bg-surface p-0 font-mono min-h-screen *:box-border">
+      <body className="bg-background text-foreground min-h-screen font-mono antialiased selection:bg-selection">
         {children}
         <Scripts />
       </body>

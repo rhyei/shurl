@@ -9,7 +9,7 @@ export const buttonVariants = cva('gap-1.5 flex cursor-pointer items-center just
   variants: {
     variant: {
       contained:
-        'bg-background text-brand hover:enabled:bg-background/70 transition-all disabled:cursor-default disabled:opacity-80',
+        'bg-surface text-brand hover:enabled:bg-surface/70 transition-all disabled:cursor-default disabled:opacity-80',
     },
     size: {
       lg: 'h-12 px-12 text-2xl font-medium flex items-center justify-center tracking-[-1.2%]',

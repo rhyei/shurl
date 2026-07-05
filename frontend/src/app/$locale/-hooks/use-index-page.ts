@@ -13,7 +13,7 @@ const UrlFieldSchema = v.pipe(
   v.url('validation.invalid-url'),
 )
 
-export function useIndexPage() {
+export function useShortenPage() {
   const { copy, copied: isCopied } = useCopy()
 
   const urlField = useField('', {
@@ -44,21 +44,21 @@ export function useIndexPage() {
 
   const url = urlField.watch().trim()
   const isShortened = url === shortenMutation.data?.data?.shortUrl
-  const isShortenDisabled = !url || !!urlField.error || shortenMutation.isLoading
+  const isShortenDisabled =
+    (!url && urlField.touched) || !!urlField.error || shortenMutation.isLoading
 
   return {
     state: {
-      url,
+      isCopied,
       isShortened,
       isShortenDisabled,
-      isCopied,
     },
     mutations: {
       shorten: shortenMutation,
     },
     functions: {
-      handleShorten,
       handleCopy,
+      handleShorten,
     },
     features: {
       urlField,
