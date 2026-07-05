@@ -8,7 +8,8 @@ import type { EventTrackerService, GoEvent } from '#/common/interfaces/event-tra
 import { CLICKHOUSE } from '#/lib/clickhouse'
 import { LOGGER } from '#/lib/logger'
 
-export const EVENT_TRACKER_SERVICE = createToken<EventTrackerService>('EventTrackerService')
+export const EVENT_TRACKER_SERVICE =
+  createToken<ClickhouseEventTrackerService>('EventTrackerService')
 
 @Inject(LOGGER, CLICKHOUSE)
 export class ClickhouseEventTrackerService implements EventTrackerService {

@@ -1,10 +1,12 @@
-import type { JsonSchema } from '@enshou/openapi'
-
 import { Application } from '@enshou/core'
 import { OpenApiBuilder, scalarUi } from '@enshou/openapi'
 import { toJsonSchema } from '@valibot/to-json-schema'
 import { cors } from 'hono/cors'
 
+import {
+  ClickhouseEventTrackerService,
+  EVENT_TRACKER_SERVICE,
+} from '#/common/services/clickhouse-event-tracker-service'
 import { CACHE_SERVICE, RedisCacheService } from '#/common/services/redis-cache-service'
 import {
   DYNAMIC_FILTER_SERVICE,
@@ -21,12 +23,7 @@ import {
   GO_EVENT_TRACKER_MIDDLEWARE,
   GoEventTrackerMiddleware,
 } from '#/modules/shortener/middleware/go-event-tracker.middleware'
-import { GUEST_URLS_ID_SEQUENCE, GuestUrlsIdSequence } from '#/modules/shortener/services'
-
-import {
-  ClickhouseEventTrackerService,
-  EVENT_TRACKER_SERVICE,
-} from './common/services/clickhouse-event-tracker-service'
+import { GUEST_URLS_ID_SEQUENCE, GuestUrlsIdSequence } from '#/modules/shortener/utils'
 
 declare module '@enshou/core' {
   interface GlobalEnv {
@@ -60,7 +57,7 @@ const app = new Application({
 const openapi = new OpenApiBuilder({
   info: { title: 'Shurl', version: '1.0.0' },
   controllers: app.controllers,
-  schemaConverter: { toJsonSchema: (schema) => toJsonSchema(schema as any) as JsonSchema },
+  schemaConverter: { toJsonSchema },
 }).toDocument()
 
 export default (await app.instantiate())

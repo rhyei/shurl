@@ -16,7 +16,7 @@ import { LOGGER } from '#/lib/logger'
 import { encodeBase62 } from '#/utils/encode-base62'
 
 import { getShortUrlKey, SHORT_URL_TTL, GUEST_URLS_FILTER_KEY } from './config'
-import { GUEST_URLS_ID_SEQUENCE } from './services'
+import { GUEST_URLS_ID_SEQUENCE } from './utils'
 
 export const SHORTENER_SERVICE = createToken('ShortenerService')
 
