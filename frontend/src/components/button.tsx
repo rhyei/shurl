@@ -5,15 +5,16 @@ import { cva } from 'class-variance-authority'
 
 import { cn } from '#/utils/cn'
 
-export const buttonVariants = cva('flex cursor-pointer items-center justify-center gap-1.5', {
+export const buttonVariants = cva('gap-1.5 flex cursor-pointer items-center justify-center', {
   variants: {
     variant: {
       contained:
-        'bg-background text-brand transition-all hover:enabled:bg-background/70 disabled:cursor-default disabled:opacity-80',
+        'bg-background text-brand hover:enabled:bg-background/70 transition-all disabled:cursor-default disabled:opacity-80',
     },
     size: {
-      lg: 'flex h-12 items-center justify-center px-12 text-2xl font-medium tracking-[-1.2%]',
-      'icon-lg': 'flex size-12 shrink-0 items-center justify-center text-2.5 font-medium',
+      lg: 'h-12 px-12 text-2xl font-medium flex items-center justify-center tracking-[-1.2%]',
+      'icon-lg':
+        'size-12 text-2xl *:text-2xl font-medium flex shrink-0 items-center justify-center',
     },
   },
   defaultVariants: {

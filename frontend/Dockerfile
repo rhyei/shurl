@@ -18,12 +18,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/frontend ./frontend
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 
-RUN cd ./frontend && bun gen:routes && bun run build
+RUN cd ./frontend && bun run build
 
 FROM oven/bun:1.3.14-alpine AS runner
 WORKDIR /app
 
-COPY --from=builder /app/frontend/.output ./frontend/dist
+COPY --from=builder /app/frontend/dist ./frontend/dist
 
 WORKDIR /app/frontend
 

@@ -8,7 +8,7 @@ import { cn } from '#/utils/cn'
 export const inputVariants = cva('text-brand outline-none', {
   variants: {
     variant: {
-      ghost: 'text-brand placeholder:text-muted',
+      ghost: 'text-brand placeholder:text-muted bg-transparent',
     },
     size: {
       lg: 'text-4xl tracking-[0.5%]',

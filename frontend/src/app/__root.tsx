@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 
 import { HeadContent, Scripts, createRootRoute, useParams } from '@tanstack/react-router'
+import '@unocss/reset/tailwind.css'
+import 'virtual:uno.css'
 
 import { client } from '../../generated/api/client.gen'
-import styles from '../styles.css?url'
 
 client.setConfig({
   baseUrl: '/',
@@ -25,7 +26,6 @@ export const Route = createRootRoute({
       { title: 'Shurl' },
     ],
     links: [
-      { rel: 'stylesheet', href: styles },
       { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
       { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
       { rel: 'icon', href: '/favicon.ico' },
@@ -44,7 +44,7 @@ function Root({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="m-0 min-h-screen bg-surface p-0 font-mono *:box-border">
+      <body className="m-0 bg-surface p-0 font-mono min-h-screen *:box-border">
         {children}
         <Scripts />
       </body>

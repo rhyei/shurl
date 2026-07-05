@@ -1,14 +1,17 @@
 import { kanjou } from '@kanjou/vite'
-import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import react from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
+import unoCss from 'unocss/vite'
 import { defineConfig } from 'vite'
 import 'dotenv/config'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
+    unoCss({
+      mode: command === 'build' ? 'per-module' : 'global',
+    }),
     kanjou({
       sourceLocalePath: './src/assets/locales/en.json',
       dts: {
@@ -22,7 +25,6 @@ export default defineConfig({
       },
     }),
     react(),
-    tailwindcss(),
     nitro({
       preset: 'bun',
       output: {
@@ -33,4 +35,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+}))

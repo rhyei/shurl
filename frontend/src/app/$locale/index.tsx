@@ -1,6 +1,5 @@
 import { useI18n } from '@kanjou/react'
 import { createFileRoute } from '@tanstack/react-router'
-import { CheckIcon, CopyIcon } from 'lucide-react'
 
 import { Button } from '#/components/button'
 import { Input } from '#/components/input'
@@ -18,8 +17,8 @@ function RouteComponent() {
   const { t } = useI18n()
 
   return (
-    <div className="relative mx-auto mt-64 flex w-180 flex-col">
-      <div className="flex justify-between gap-4">
+    <div className="mt-64 w-180 relative mx-auto flex flex-col">
+      <div className="gap-4 flex justify-between">
         <Input
           {...features.urlField.register()}
           placeholder={t('input.shorten.placeholder')}
@@ -29,16 +28,16 @@ function RouteComponent() {
         <Button
           data-hidden={!state.isShortened}
           size="icon-lg"
-          className="transition-all duration-200 ease-out data-[hidden=true]:scale-0 data-[hidden=true]:opacity-0"
+          className="ease-out transition-all duration-200 data-[hidden=true]:scale-0 data-[hidden=true]:opacity-0"
           onClick={functions.handleCopy}
         >
-          <CopyIcon
+          <span
             data-copied={state.isCopied}
-            className="absolute text-brand transition-all duration-200 ease-out data-[copied=true]:scale-50 data-[copied=true]:opacity-0"
+            className="i-material-symbols-content-copy-outline-sharp text-brand ease-out absolute transition-all duration-200 data-[copied=true]:scale-50 data-[copied=true]:opacity-0"
           />
-          <CheckIcon
+          <span
             data-copied={state.isCopied}
-            className="absolute scale-50 text-green-500 opacity-0 transition-all duration-200 ease-out data-[copied=true]:scale-100 data-[copied=true]:opacity-100"
+            className="i-material-symbols-check text-green-500 ease-out absolute scale-50 opacity-0 transition-all duration-200 data-[copied=true]:scale-100 data-[copied=true]:opacity-100"
           />
         </Button>
       </div>
@@ -46,9 +45,8 @@ function RouteComponent() {
       <div className="h-6 text-red-500 select-none">
         {!!state.url && features.urlField.error && t(features.urlField.error)}
       </div>
-
       <Button
-        className="mt-32 w-52 self-end"
+        className="mt-32 w-48 self-end"
         disabled={state.isShortenDisabled}
         onClick={functions.handleShorten}
       >
