@@ -13,8 +13,8 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      background: '#222222',
-      surface: '#1e1e1e',
+      background: '#1e1e1e',
+      surface: '#222222',
       foreground: '#e5e5e5',
       muted: '#414141',
       brand: '#eb6822',
