@@ -10,10 +10,13 @@ catalog:
 
 allowBuilds:
   esbuild: true
-  simple-git-hooks: true
+  lefthook: true
 
 minimumReleaseAgeExclude:
   - '@enshou/core'
   - '@enshou/di'
   - '@enshou/openapi'
   - '@enshou/valibot'
+  - '@kanjou/config'
+  - '@kanjou/react'
+  - '@kanjou/vite'

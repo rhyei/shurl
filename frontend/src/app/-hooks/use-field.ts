@@ -1,21 +1,25 @@
 import type { ChangeEventHandler, FocusEventHandler, RefObject } from 'react'
+import type { BaseSchema, BaseSchemaAsync } from 'valibot'
 
 import { useRef, useState } from 'react'
+import { safeParseAsync } from 'valibot'
 
-import { useRerender } from '../use-rerender/use-rerender'
+import { useRerender } from '#/hooks/use-rerender/use-rerender'
 
 /** The use field element type */
 type UseFieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
 /** The use field params type */
-export interface UseFieldOptions {
+export interface UseFieldOptions<TSchema> {
+  /** The valibot schema for validation */
+  schema?: TSchema
   /** The auto focus */
   autoFocus?: boolean
   /** The initial touched */
   initialTouched?: boolean
   /** The validate on blur */
   validateOnBlur?: boolean
-  /** The validate on mount */
+  /** The validate on change */
   validateOnChange?: boolean
   /** The validate on mount */
   validateOnMount?: boolean
@@ -23,39 +27,10 @@ export interface UseFieldOptions {
 
 /** The use field register params type */
 export interface UseFieldRegisterParams {
-  /** The min value validation */
-  max?: {
-    value: number
-    message: string
-  }
-  /** The max length validation */
-  maxLength?: {
-    value: number
-    message: string
-  }
-  /** The max value validation */
-  min?: {
-    value: number
-    message: string
-  }
-  /** The min length validation */
-  minLength?: {
-    value: number
-    message: string
-  }
   /** The blur event handler */
   onBlur?: FocusEventHandler<UseFieldElement>
   /** The change event handler */
   onChange?: ChangeEventHandler<UseFieldElement>
-  /** The pattern validation */
-  pattern?: {
-    value: RegExp
-    message: string
-  }
-  /** The required validation */
-  required?: string
-  /** The custom validation */
-  validate?: (value: string) => string | true | Promise<string | true>
 }
 
 /** The use field return type */
@@ -84,19 +59,19 @@ export interface UseFieldReturn<Value> {
   reset: () => void
   /** The set error function */
   setError: (error: string) => void
-  /** The  set value function */
+  /** The set value function */
   setValue: (value: Value) => void
   /** The watch function */
   watch: () => Value
 }
 
 export const useField = <
-  Value extends boolean | number | string = string,
-  Type = Value extends string ? string : Value extends boolean ? boolean : number,
+  Value = string,
+  TSchema extends BaseSchema<unknown, unknown, any> | BaseSchemaAsync<unknown, unknown, any> = any,
 >(
-  initialValue = '' as Value,
-  options?: UseFieldOptions,
-): UseFieldReturn<Type> => {
+  initialValue: Value,
+  options?: UseFieldOptions<TSchema>,
+): UseFieldReturn<Value> => {
   const inputRef = useRef<UseFieldElement | null>(null)
   const watchingRef = useRef(false)
   const rerender = useRerender()
@@ -105,71 +80,60 @@ export const useField = <
   const [touched, setTouched] = useState(options?.initialTouched ?? false)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const getValue = () => {
+  const getValue = (): Value => {
+    if (!inputRef.current) {
+      return initialValue
+    }
     if (
-      inputRef.current &&
-      'checked' in inputRef.current &&
-      (inputRef.current.type === 'radio' || inputRef.current.type === 'checkbox')
-    )
-      return inputRef.current.checked as Type
-    return (inputRef.current?.value ?? initialValue) as Type
-  }
-
-  const setValue = (value: Type) => {
-    if (
-      inputRef.current &&
       'checked' in inputRef.current &&
       (inputRef.current.type === 'radio' || inputRef.current.type === 'checkbox')
     ) {
-      inputRef.current.checked = value as boolean
-      if (watchingRef.current) return rerender()
+      return inputRef.current.checked as unknown as Value
+    }
+    return inputRef.current.value as unknown as Value
+  }
+
+  const setValue = (value: Value) => {
+    if (!inputRef.current) return
+
+    if (
+      'checked' in inputRef.current &&
+      (inputRef.current.type === 'radio' || inputRef.current.type === 'checkbox')
+    ) {
+      inputRef.current.checked = value as unknown as boolean
+      if (watchingRef.current) rerender()
       return
     }
 
-    inputRef.current!.value = value as string
-    if (watchingRef.current) return rerender()
+    inputRef.current.value = String(value)
+    if (watchingRef.current) rerender()
   }
 
   const reset = () => {
-    setValue(initialValue as unknown as Type)
+    setValue(initialValue)
     setDirty(false)
     setTouched(false)
     setError(undefined)
   }
 
-  const focus = () => inputRef.current!.focus()
+  const focus = () => {
+    inputRef.current?.focus()
+  }
 
-  const validate = async (params: UseFieldRegisterParams) => {
-    if (params.required && !inputRef.current!.value) {
-      return setError(params.required)
-    }
+  const validate = async () => {
+    if (!options?.schema) return true
 
-    if (params.min && Number(inputRef.current!.value) < params.min.value) {
-      return setError(params.min.message)
-    }
+    const value = getValue()
+    const result = await safeParseAsync(options.schema, value)
 
-    if (params.max && Number(inputRef.current!.value) > params.max.value) {
-      return setError(params.max.message)
-    }
-
-    if (params.minLength && inputRef.current!.value.length < params.minLength.value) {
-      return setError(params.minLength.message)
-    }
-
-    if (params.maxLength && inputRef.current!.value.length > params.maxLength.value) {
-      return setError(params.maxLength.message)
-    }
-
-    if (params.pattern && !params.pattern.value.test(inputRef.current!.value)) {
-      return setError(params.pattern.message)
-    }
-
-    if (params.validate) {
-      const error = await params.validate(inputRef.current!.value)
-      if (typeof error === 'string') return setError(error)
+    if (!result.success) {
+      const firstIssue = result.issues[0]
+      setError(firstIssue.message)
+      return false
     }
 
     setError(undefined)
+    return true
   }
 
   const register = (registerParams?: UseFieldRegisterParams) => ({
@@ -183,7 +147,7 @@ export const useField = <
         if (options?.autoFocus) node.focus()
         inputRef.current = node
         if ('checked' in node && node.type === 'radio') {
-          node.defaultChecked = initialValue === node.value
+          node.defaultChecked = (initialValue as unknown) === node.value
           return
         }
         if ('checked' in node && node.type === 'checkbox') {
@@ -196,25 +160,34 @@ export const useField = <
           node.value = String(initialValue)
         }
 
-        if (registerParams && options?.validateOnMount) await validate(registerParams)
+        if (options?.validateOnMount) {
+          await validate()
+        }
       }
     },
     onChange: (async (event) => {
       if (watchingRef.current) rerender()
-      if (inputRef.current!.value !== initialValue) setDirty(true)
-      if (inputRef.current!.value === initialValue) setDirty(false)
-      if (registerParams && options?.validateOnChange) await validate(registerParams)
-      if (registerParams && options?.validateOnBlur) setError(undefined)
+      const currentValue = getValue()
+      setDirty(currentValue !== initialValue)
+
+      if (options?.validateOnChange) {
+        await validate()
+      } else if (options?.validateOnBlur) {
+        setError(undefined)
+      }
+
       registerParams?.onChange?.(event)
     }) as ChangeEventHandler<UseFieldElement>,
     onBlur: (async (event) => {
-      if (registerParams && options?.validateOnBlur) await validate(registerParams)
+      if (options?.validateOnBlur) {
+        await validate()
+      }
       setTouched(true)
       registerParams?.onBlur?.(event)
     }) as FocusEventHandler<UseFieldElement>,
   })
 
-  const watch = () => {
+  const watch = (): Value => {
     watchingRef.current = true
     return getValue()
   }

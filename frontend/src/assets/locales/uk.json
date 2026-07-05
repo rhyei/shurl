@@ -1,0 +1,6 @@
+{
+  "input.shorten.placeholder": "https://google.com/...",
+  "button.shorten": "СКОРОТИТИ",
+  "button.clear": "ОЧИСТИТИ",
+  "validation.invalid-url": "Недійсна URL-адреса"
+}

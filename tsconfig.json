@@ -1,13 +1,5 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "noFallthroughCasesInSwitch": true
-  }
+  "references": [{ "path": "./scripts" }, { "path": "./backend" }, { "path": "./frontend" }],
+  "compilerOptions": {},
+  "files": []
 }

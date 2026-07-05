@@ -1,12 +1,20 @@
 import type { ReactNode } from 'react'
 
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute, useParams } from '@tanstack/react-router'
 
 import { client } from '../../generated/api/client.gen'
 import styles from '../styles.css?url'
 
 client.setConfig({
   baseUrl: '/',
+})
+
+client.interceptors.request.use((request) => {
+  if (typeof window === 'undefined') return request
+
+  const locale = window.location.pathname.split('/')[1] || 'en'
+  request.headers.set('Accept-Language', locale)
+  return request
 })
 
 export const Route = createRootRoute({
@@ -27,8 +35,12 @@ export const Route = createRootRoute({
 })
 
 function Root({ children }: { children: ReactNode }) {
+  const params = useParams({ strict: false })
+
+  const locale = params.locale || 'en'
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>

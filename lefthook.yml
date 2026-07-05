@@ -1,0 +1,13 @@
+pre-commit:
+  commands:
+    lint:
+      run: pnpm oxlint --fix --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    fmt:
+      run: pnpm oxfmt --write --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+
+prepare-commit-msg:
+  commands:
+    prepare:
+      run: bun ./scripts/prepare-commit-msg.ts {1}

@@ -1,12 +1,26 @@
+import * as v from 'valibot'
+
 import type { PostApiShortenData } from '#/api'
 
 import { postApiShorten } from '#/api'
-import { useCopy, useField, useMutation } from '#/hooks'
+import { useField } from '#/app/-hooks'
+import { useCopy, useMutation } from '#/hooks'
+
+const UrlFieldSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.transform((input) => (/^https?:\/\//i.test(input) ? input : `https://${input}`)),
+  v.url('validation.invalid-url'),
+)
 
 export function useIndexPage() {
-  const copy = useCopy()
+  const { copy, copied: isCopied } = useCopy()
 
-  const urlField = useField('', { validateOnBlur: true, validateOnChange: true })
+  const urlField = useField('', {
+    schema: UrlFieldSchema,
+    validateOnBlur: true,
+    validateOnChange: true,
+  })
 
   const shortenMutation = useMutation((body: PostApiShortenData['body']) =>
     postApiShorten({ body }),
@@ -25,7 +39,7 @@ export function useIndexPage() {
   }
 
   const handleCopy = async () => {
-    if (shortenMutation.data?.data) await copy.copy(shortenMutation.data.data.shortUrl)
+    if (shortenMutation.data?.data) await copy(shortenMutation.data.data.shortUrl)
   }
 
   const url = urlField.watch().trim()
@@ -37,6 +51,7 @@ export function useIndexPage() {
       url,
       isShortened,
       isShortenDisabled,
+      isCopied,
     },
     mutations: {
       shorten: shortenMutation,
@@ -47,7 +62,6 @@ export function useIndexPage() {
     },
     features: {
       urlField,
-      copy,
     },
   }
 }

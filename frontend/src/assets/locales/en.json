@@ -1,0 +1,6 @@
+{
+  "input.shorten.placeholder": "https://google.com/...",
+  "button.shorten": "SHORTEN",
+  "button.clear": "CLEAR",
+  "validation.invalid-url": "Invalid URL"
+}

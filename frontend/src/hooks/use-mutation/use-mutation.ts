@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 /* The type of the options */
-interface UseMutationOptions<Data> {
+export interface UseMutationOptions<Data> {
   /* The retry count of requests */
   retry?: ((failureCount: number, error: Error) => boolean) | boolean | number
   /* The retry delay of requests */
@@ -13,7 +13,7 @@ interface UseMutationOptions<Data> {
 }
 
 /* The use mutation return type */
-interface UseMutationReturn<Body, Data> {
+export interface UseMutationReturn<Body, Data> {
   /* The data of the mutation */
   data: Data | null
   /* The error of the mutation */

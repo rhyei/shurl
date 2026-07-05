@@ -7,3 +7,5 @@ dist
 routeTree.gen.ts
 generated
 *.log
+*.tsbuildinfo
+
