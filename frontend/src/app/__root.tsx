@@ -1,24 +1,24 @@
 import type { ReactNode } from 'react'
 
-import { HeadContent, Scripts, createRootRoute, useParams } from '@tanstack/react-router'
+import { I18nProvider } from '@kanjou/react'
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import locales from 'virtual:kanjou/modules'
 import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
 
 import { client } from '../../generated/api/client.gen'
+import { getLocale } from './-utils/locale'
 
 client.setConfig({
   baseUrl: '/',
 })
 
-client.interceptors.request.use((request) => {
-  if (typeof window === 'undefined') return request
-
-  const locale = window.location.pathname.split('/')[1] || 'en'
-  request.headers.set('Accept-Language', locale)
-  return request
-})
-
 export const Route = createRootRoute({
+  loader: async () => {
+    const locale = await getLocale()
+    const messages = await locales[locale]()
+    return { locale, messages: messages.default }
+  },
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -35,9 +35,7 @@ export const Route = createRootRoute({
 })
 
 function Root({ children }: { children: ReactNode }) {
-  const params = useParams({ strict: false })
-
-  const locale = params.locale || 'en'
+  const { locale, messages } = Route.useLoaderData()
 
   return (
     <html lang={locale}>
@@ -45,7 +43,9 @@ function Root({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="bg-background text-foreground min-h-screen font-mono antialiased selection:bg-selection">
-        {children}
+        <I18nProvider locale={locale} messages={messages}>
+          {children}
+        </I18nProvider>
         <Scripts />
       </body>
     </html>

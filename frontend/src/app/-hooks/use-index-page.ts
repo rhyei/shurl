@@ -3,8 +3,9 @@ import * as v from 'valibot'
 import type { PostApiShortenData } from '#/api'
 
 import { postApiShorten } from '#/api'
-import { useField } from '#/app/-hooks'
 import { useCopy, useMutation } from '#/hooks'
+
+import { useField } from './use-field'
 
 const UrlFieldSchema = v.pipe(
   v.string(),
