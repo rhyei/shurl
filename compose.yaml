@@ -124,7 +124,7 @@ services:
       postgres:
         condition: service_healthy
 
-  loadbalancer:
+  gateway:
     image: caddy:2-alpine
     restart: unless-stopped
     ports:

@@ -11,7 +11,7 @@
 grafana/
 prometheus.yml
 nginx/
-loadbalancer/
+gateway/
 scripts/
 compose.yaml
 .gitignore
