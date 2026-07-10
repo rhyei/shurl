@@ -10,9 +10,9 @@ import { LOGGER } from '#/lib/logger'
 export class ErrorHandler implements EnshouErrorHandler {
   constructor(private readonly logger: Logger) {}
 
-  handle: HonoErrorHandler = (error, c) => {
-    if (error instanceof RestException) return c.json({ error }, error.status)
+  handle: HonoErrorHandler = (error) => {
+    if (error instanceof RestException) return error.getResponse()
     this.logger.error('{requestId} {error}', { error })
-    return RestException.InternalServerError().toHTTP().getResponse()
+    return new RestException(505).getResponse()
   }
 }

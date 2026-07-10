@@ -35,6 +35,8 @@ export class ShortenerService {
 
     const nextValue = await this.guestUrlIdSequence.nextValue()
 
+    await Bun.sleep(1500)
+
     const id = encodeBase62(nextValue)
     const shortUrl = `${Bun.env.ORIGIN}/g/${id}`
 
@@ -56,7 +58,7 @@ export class ShortenerService {
     const exists = await this.dynamicFilter.exists(GUEST_URLS_FILTER_KEY, id)
     if (!exists) {
       this.logger.debug(`{requestId} Id {id} rejected by bloom filter`, { id })
-      throw RestException.NotFound()
+      throw new RestException(404)
     }
 
     const originalUrl = await this.cache.remember(getShortUrlKey(id), SHORT_URL_TTL, async () => {
@@ -65,7 +67,7 @@ export class ShortenerService {
       return url[0]?.originalUrl
     })
 
-    if (!originalUrl) throw RestException.NotFound()
+    if (!originalUrl) throw new RestException(404)
 
     this.logger.debug('{requestId} Resolved URL {originalUrl}', { originalUrl })
 

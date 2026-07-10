@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { ComponentProps } from 'react'
 
+import { Button as ButtonPrimitive } from '@base-ui/react'
 import { cva } from 'class-variance-authority'
 
 import { cn } from '#/utils/cn'
@@ -23,12 +23,12 @@ export const buttonVariants = cva('gap-1.5 flex cursor-pointer items-center just
   },
 })
 
-export type ButtonProps = ComponentProps<'button'> & VariantProps<typeof buttonVariants>
+export type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>
 
 export function Button({ children, className, variant, size, ...props }: ButtonProps) {
   return (
-    <button {...props} className={cn(buttonVariants({ variant, size }), className)}>
+    <ButtonPrimitive {...props} className={cn(buttonVariants({ variant, size }), className)}>
       {children}
-    </button>
+    </ButtonPrimitive>
   )
 }

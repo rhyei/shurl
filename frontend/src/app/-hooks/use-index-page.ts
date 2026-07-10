@@ -1,9 +1,8 @@
+import { useMutation } from '@tanstack/react-query'
 import * as v from 'valibot'
 
-import type { PostApiShortenData } from '#/api'
-
-import { postApiShorten } from '#/api'
-import { useCopy, useMutation } from '#/hooks'
+import { postApiShortenMutation } from '#/api/tanstack'
+import { useCopy } from '#/hooks'
 
 import { useField } from './use-field'
 
@@ -23,30 +22,26 @@ export function useShortenPage() {
     validateOnChange: true,
   })
 
-  const shortenMutation = useMutation((body: PostApiShortenData['body']) =>
-    postApiShorten({ body }),
-  )
+  const shortenMutation = useMutation(postApiShortenMutation())
 
   const handleShorten = async () => {
     if (isShortened) return urlField.setValue('')
 
-    let url = urlField.getValue()
-    if (!/^https?:\/\//i.test(url)) url = `https://${url}`
+    const shortenResponse = await shortenMutation.mutateAsync({
+      body: { url: url.startsWith('http') ? url : `https://${url}` },
+    })
 
-    const shortenResponse = await shortenMutation.mutateAsync({ url })
-
-    if (shortenResponse.error) urlField.setError(shortenResponse.error.error?.name)
-    else urlField.setValue(shortenResponse.data.shortUrl)
+    if (shortenResponse?.shortUrl) urlField.setValue(shortenResponse.shortUrl)
   }
 
-  const handleCopy = async () => {
-    if (shortenMutation.data?.data) await copy(shortenMutation.data.data.shortUrl)
+  const handleCopy = () => {
+    if (shortenMutation.data) void copy(shortenMutation.data.shortUrl)
   }
 
   const url = urlField.watch().trim()
-  const isShortened = url === shortenMutation.data?.data?.shortUrl
+  const isShortened = url === shortenMutation.data?.shortUrl
   const isShortenDisabled =
-    (!url && urlField.touched) || !!urlField.error || shortenMutation.isLoading
+    (!url && urlField.touched) || !!urlField.error || shortenMutation.isPending
 
   return {
     state: {

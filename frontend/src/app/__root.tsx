@@ -1,24 +1,22 @@
+import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
 import { I18nProvider } from '@kanjou/react'
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import locales from 'virtual:kanjou/modules'
-import '@unocss/reset/tailwind.css'
-import 'virtual:uno.css'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
-import { client } from '../../generated/api/client.gen'
+import { client } from '#/api/client'
+
 import { getLocale } from './-utils/locale'
 
-client.setConfig({
-  baseUrl: '/',
-})
+import locales from 'virtual:kanjou/modules'
+import 'virtual:uno.css'
 
-export const Route = createRootRoute({
-  loader: async () => {
-    const locale = await getLocale()
-    const messages = await locales[locale]()
-    return { locale, messages: messages.default }
-  },
+client.setConfig({ baseUrl: '/' })
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -31,6 +29,11 @@ export const Route = createRootRoute({
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
+  loader: async () => {
+    const locale = await getLocale()
+    const messages = await locales[locale]()
+    return { locale, messages: messages.default }
+  },
   shellComponent: Root,
 })
 
@@ -46,6 +49,12 @@ function Root({ children }: { children: ReactNode }) {
         <I18nProvider locale={locale} messages={messages}>
           {children}
         </I18nProvider>
+        <TanStackDevtools
+          plugins={[
+            { name: 'TanStack Query', render: <ReactQueryDevtoolsPanel /> },
+            { name: 'TanStack Router', render: <TanStackRouterDevtoolsPanel /> },
+          ]}
+        />
         <Scripts />
       </body>
     </html>

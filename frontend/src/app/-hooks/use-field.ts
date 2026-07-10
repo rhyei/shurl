@@ -67,10 +67,10 @@ export interface UseFieldReturn<Value> {
 
 export const useField = <
   Value = string,
-  TSchema extends BaseSchema<unknown, unknown, any> | BaseSchemaAsync<unknown, unknown, any> = any,
+  Schema extends BaseSchema<unknown, unknown, any> | BaseSchemaAsync<unknown, unknown, any> = any,
 >(
   initialValue: Value,
-  options?: UseFieldOptions<TSchema>,
+  options?: UseFieldOptions<Schema>,
 ): UseFieldReturn<Value> => {
   const inputRef = useRef<UseFieldElement | null>(null)
   const watchingRef = useRef(false)

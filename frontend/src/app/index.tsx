@@ -19,20 +19,24 @@ function RouteComponent() {
   return (
     <div className="flex w-180 flex-col mx-auto pt-48">
       <div className="grid grid-cols-[1fr_auto] gap-4">
-        <Input {...features.urlField.register()} placeholder={t('input.shorten.placeholder')} />
+        <Input
+          {...features.urlField.register()}
+          disabled={mutations.shorten.isPending}
+          placeholder={t('input.shorten.placeholder')}
+        />
         <Button
-          data-hidden={!state.isShortened}
           size="icon-lg"
           className="*:transition *:duration-150 *:ease-out data-[hidden=true]:scale-0 data-[hidden=true]:opacity-0 grid place-items-center *:col-start-1 *:row-start-1"
+          data-hidden={!state.isShortened}
           onClick={functions.handleCopy}
         >
           <span
-            data-copied={state.isCopied}
             className="i-material-symbols-content-copy-outline-sharp text-brand data-[copied=true]:scale-50 data-[copied=true]:opacity-0"
+            data-copied={state.isCopied}
           />
           <span
-            data-copied={state.isCopied}
             className="i-material-symbols-check scale-50 text-success opacity-0 data-[copied=true]:scale-100 data-[copied=true]:opacity-100"
+            data-copied={state.isCopied}
           />
         </Button>
       </div>
@@ -46,9 +50,9 @@ function RouteComponent() {
         disabled={state.isShortenDisabled}
         onClick={functions.handleShorten}
       >
-        {!mutations.shorten.isLoading && state.isShortened && t('button.clear')}
-        {!mutations.shorten.isLoading && !state.isShortened && t('button.shorten')}
-        {mutations.shorten.isLoading && <Loader />}
+        {!mutations.shorten.isPending && state.isShortened && t('button.clear')}
+        {!mutations.shorten.isPending && !state.isShortened && t('button.shorten')}
+        {mutations.shorten.isPending && <Loader />}
       </Button>
     </div>
   )
