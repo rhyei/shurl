@@ -13,6 +13,7 @@ import {
   RedisDynamicFilterService,
 } from '#/common/services/redis-dynamic-filter-service'
 import { db, DB } from '#/database'
+import { SEQUENCE_SERVICE, SequenceService } from '#/database/utils'
 import { ErrorHandler } from '#/error-handler'
 import { clickhouse, CLICKHOUSE } from '#/lib/clickhouse'
 import { LOGGER, loggerFactory } from '#/lib/logger'
@@ -23,7 +24,6 @@ import {
   GO_EVENT_TRACKER_MIDDLEWARE,
   GoEventTrackerMiddleware,
 } from '#/modules/shortener/middleware/go-event-tracker.middleware'
-import { GUEST_URLS_ID_SEQUENCE, GuestUrlsIdSequence } from '#/modules/shortener/utils'
 
 declare module '@enshou/core' {
   interface GlobalEnv {
@@ -44,7 +44,7 @@ const app = new Application({
     { provide: CACHE_SERVICE, useClass: RedisCacheService },
     { provide: DYNAMIC_FILTER_SERVICE, useClass: RedisDynamicFilterService },
     { provide: EVENT_TRACKER_SERVICE, useClass: ClickhouseEventTrackerService },
-    { provide: GUEST_URLS_ID_SEQUENCE, useClass: GuestUrlsIdSequence },
+    { provide: SEQUENCE_SERVICE, useClass: SequenceService },
     { provide: LOGGER, useFactory: loggerFactory, scope: 'transient' },
     { provide: GO_EVENT_TRACKER_MIDDLEWARE, useClass: GoEventTrackerMiddleware },
     { provide: LOGGER_MIDDLEWARE, useClass: LoggerMiddleware },

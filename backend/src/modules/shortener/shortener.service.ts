@@ -10,21 +10,20 @@ import type { Db } from '#/database'
 
 import { CACHE_SERVICE } from '#/common/services/redis-cache-service'
 import { DYNAMIC_FILTER_SERVICE } from '#/common/services/redis-dynamic-filter-service'
-import { DB, guestUrls } from '#/database'
-import { Sequence } from '#/database/utils'
+import { DB, guestUrls, guestUrlsIdSeq } from '#/database'
+import { SEQUENCE_SERVICE, SequenceService } from '#/database/utils'
 import { LOGGER } from '#/lib/logger'
 import { encodeBase62 } from '#/utils/encode-base62'
 
 import { getShortUrlKey, SHORT_URL_TTL, GUEST_URLS_FILTER_KEY } from './config'
-import { GUEST_URLS_ID_SEQUENCE } from './utils'
 
 export const SHORTENER_SERVICE = createToken('ShortenerService')
 
-@Inject(LOGGER, GUEST_URLS_ID_SEQUENCE, DB, CACHE_SERVICE, DYNAMIC_FILTER_SERVICE)
+@Inject(LOGGER, SEQUENCE_SERVICE, DB, CACHE_SERVICE, DYNAMIC_FILTER_SERVICE)
 export class ShortenerService {
   constructor(
     private readonly logger: Logger,
-    private readonly guestUrlIdSequence: Sequence,
+    private readonly sequence: SequenceService,
     private readonly db: Db,
     private readonly cache: CacheService,
     private readonly dynamicFilter: DynamicFilterService,
@@ -33,9 +32,7 @@ export class ShortenerService {
   async shorten(originalUrl: string) {
     this.logger.debug(`{requestId} Shortening URL {originalUrl}`, { originalUrl })
 
-    const nextValue = await this.guestUrlIdSequence.nextValue()
-
-    await Bun.sleep(1500)
+    const nextValue = await this.sequence.nextValue(guestUrlsIdSeq)
 
     const id = encodeBase62(nextValue)
     const shortUrl = `${Bun.env.ORIGIN}/g/${id}`
