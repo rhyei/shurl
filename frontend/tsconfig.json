@@ -13,7 +13,7 @@
     "paths": {
       "#/api": ["./generated/api/index.ts"],
       "#/api/tanstack": ["./generated/api/@tanstack/react-query.gen.ts"],
-      "#/api/client": ["./generated/api//client.gen"],
+      "#/api/client": ["./generated/api/client.gen"],
       "#/*": ["./src/*"]
     },
     "types": ["vite/client", "bun"],

@@ -1,7 +1,4 @@
 import { createClient } from '@clickhouse/client'
-import { createToken } from '@enshou/di'
-
-export const CLICKHOUSE = createToken<ReturnType<typeof createClient>>('Clickhouse')
 
 export const clickhouse = createClient({
   url: Bun.env.CLICKHOUSE_URL,
@@ -10,7 +7,9 @@ export const clickhouse = createClient({
 })
 
 try {
-  await clickhouse.command({ query: `DROP DATABASE IF EXISTS ${Bun.env.CLICKHOUSE_DB} SYNC` })
+  await clickhouse.command({
+    query: `DROP DATABASE IF EXISTS ${Bun.env.CLICKHOUSE_DB} SYNC`,
+  })
   await clickhouse.command({ query: `CREATE DATABASE ${Bun.env.CLICKHOUSE_DB}` })
 
   console.log('[CH Reset] Database reset successfully')

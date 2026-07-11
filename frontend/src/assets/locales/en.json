@@ -1,6 +1,10 @@
 {
   "input.shorten.placeholder": "https://google.com/...",
-  "button.shorten": "SHORTEN",
-  "button.clear": "CLEAR",
-  "validation.invalid-url": "Invalid URL"
+  "input.shorten.placeholder-highlight": "Enter an URL to shorten",
+  "button.shorten": "Shorten",
+  "button.clear": "Clear",
+  "validation.invalid-url": "Invalid URL",
+  "error.server": "Server error. Please try again.",
+  "error.network": "Failed to connect to the server. Please, try again.",
+  "error.offline": "You are offline. Please check your connection and try again."
 }

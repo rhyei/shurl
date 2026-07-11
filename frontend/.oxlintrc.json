@@ -1,6 +1,18 @@
 {
   "$schema": "../node_modules/oxlint/configuration_schema.json",
   "extends": ["../.oxlintrc.json"],
-  "plugins": ["eslint", "oxc", "typescript", "unicorn", "import", "react"],
-  "ignorePatterns": ["routeTree.gen.ts"]
+  "plugins": ["react", "jsx-a11y"],
+  "rules": {
+    "unicorn/no-document-cookie": "error",
+
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "off",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-props-no-spread-multi": "error",
+    "react/jsx-boolean-value": "error",
+    "react/jsx-curly-brace-presence": "error",
+    "react/jsx-handler-names": "error"
+  },
+  "ignorePatterns": ["routeTree.gen.ts", "generated/"]
 }

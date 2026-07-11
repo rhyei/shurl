@@ -5,16 +5,19 @@ import * as v from 'valibot'
 
 export const ShortenSchema = {
   json: v.object({
-    url: v.pipe(v.string(), v.url()),
+    url: v.pipe(v.string(), v.url(), v.description('The URL to shorten.')),
   }),
 } as const satisfies RouteSchema
 export type ShortenSchema = InferSchema<typeof ShortenSchema>
 
 export const ShortenResponse = defineSchema(
   'ShortenResponse',
-  v.object({
-    id: v.string(),
-    originalUrl: v.string(),
-    shortUrl: v.string(),
-  }),
+  v.pipe(
+    v.object({
+      id: v.string(),
+      originalUrl: v.string(),
+      shortUrl: v.string(),
+    }),
+    v.description('The shortened URL response.'),
+  ),
 )

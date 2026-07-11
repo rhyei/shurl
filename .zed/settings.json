@@ -6,14 +6,5 @@
     "!eslint"
   ],
   "format_on_save": "on",
-  "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }],
-  "lsp": {
-    "vscode-css-language-server": {
-      "settings": {
-        "css": {
-          "lint": { "unknownAtRules": "ignore" }
-        }
-      }
-    }
-  }
+  "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
 }

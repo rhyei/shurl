@@ -1,7 +1,7 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
 const commitMsgPath = process.argv[2]
-if (!commitMsgPath) process.exit(0)
+if (!commitMsgPath) throw new Error('No commit message path provided')
 
 // oxfmt-ignore
 const emojis = ['✨', '🌸', '🗻', '🤍', '🍥', '💎', '🎉', '🏮', '💥', '👾', '🐉', '🔥', '⚜️', '⛩️', '🥀']

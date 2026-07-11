@@ -1,23 +1,21 @@
 import type { RedisClient } from 'bun'
 
-import { createToken, Inject } from '@enshou/di'
+import { token, Inject } from '@enshou/di'
 
 import type { CacheService } from '#/common/interfaces/cache-service'
 
 import { REDIS } from '#/lib/redis'
 
-export const CACHE_SERVICE = createToken<RedisCacheService>('CacheService')
-
 @Inject(REDIS)
 export class RedisCacheService implements CacheService {
   constructor(private readonly redis: RedisClient) {}
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<Value>(key: string): Promise<Value | null> {
     try {
       let value = await this.redis.get(key)
       if (value === null) return null
       value = JSON.parse(value)
-      return value as T
+      return value as Value
     } catch {
       return null
     }
@@ -36,12 +34,32 @@ export class RedisCacheService implements CacheService {
     await this.redis.expire(key, ttl)
   }
 
-  async remember<T>(key: string, ttl: number, callback: () => Promise<T> | T): Promise<T> {
-    let value = await this.get<T>(key)
+  async rememberFor<Value>(
+    key: string,
+    ttl: number,
+    callback: () => Promise<Value> | Value,
+  ): Promise<Value> {
+    let value = await this.get<Value>(key)
     if (value === null) {
       value = await callback()
       await this.set(key, JSON.stringify(value), ttl)
     }
     return value
   }
+
+  async rememberAndProlong<Value>(
+    key: string,
+    ttl: number,
+    callback: () => Promise<Value> | Value,
+  ): Promise<Value> {
+    let value = await this.get<Value>(key)
+    if (value === null) {
+      value = await callback()
+      await this.set(key, JSON.stringify(value), ttl)
+    } else await this.expire(key, ttl)
+
+    return value
+  }
 }
+
+export const CACHE_SERVICE = token(RedisCacheService)

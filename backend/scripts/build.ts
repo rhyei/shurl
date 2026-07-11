@@ -8,9 +8,7 @@ try {
     outdir: './dist',
     minify: true,
     target: 'bun',
-    define: {
-      'Bun.env.NODE_ENV': JSON.stringify(Bun.env.NODE_ENV || 'production'),
-    },
+    define: { 'Bun.env.NODE_ENV': JSON.stringify(Bun.env.NODE_ENV ?? 'production') },
   })
   console.log(result)
 } catch (error) {

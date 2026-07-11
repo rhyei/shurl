@@ -1,6 +1,10 @@
 {
   "input.shorten.placeholder": "https://google.com/...",
-  "button.shorten": "СКОРОТИТИ",
-  "button.clear": "ОЧИСТИТИ",
-  "validation.invalid-url": "Недійсна URL-адреса"
+  "input.shorten.placeholder-highlight": "Введіть URL для скорочення",
+  "button.shorten": "Скоротити",
+  "button.clear": "Очистити",
+  "validation.invalid-url": "Недійсна URL-адреса",
+  "error.server": "Помилка сервера. Спробуйте ще раз.",
+  "error.network": "Помилка з'єднання з сервером. Спробуйте ще раз.",
+  "error.offline": "Ви відключені від Інтернету. Будь ласка, переконайтеся, що ви підключені і спробуйте ще раз."
 }

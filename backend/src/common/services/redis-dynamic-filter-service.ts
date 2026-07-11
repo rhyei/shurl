@@ -1,12 +1,10 @@
 import type { RedisClient } from 'bun'
 
-import { createToken, Inject } from '@enshou/di'
+import { Inject, token } from '@enshou/di'
 
 import type { DynamicFilterService } from '#/common/interfaces/dynamic-filter-service'
 
 import { REDIS } from '#/lib/redis'
-
-export const DYNAMIC_FILTER_SERVICE = createToken<DynamicFilterService>('DynamicFilterService')
 
 @Inject(REDIS)
 export class RedisDynamicFilterService implements DynamicFilterService {
@@ -25,3 +23,5 @@ export class RedisDynamicFilterService implements DynamicFilterService {
     await this.redis.send('CF.DEL', [filterKey, value])
   }
 }
+
+export const DYNAMIC_FILTER_SERVICE = token(RedisDynamicFilterService)

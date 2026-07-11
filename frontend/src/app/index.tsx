@@ -1,15 +1,14 @@
 import { useI18n } from '@kanjou/react'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { Button } from '#/components/button'
-import { Input } from '#/components/input'
-import { Loader } from '#/components/loader'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Loader } from '#/components/ui/loader'
+import { Typography } from '#/components/ui/typography'
 
 import { useShortenPage } from './-hooks'
 
-export const Route = createFileRoute('/')({
-  component: RouteComponent,
-})
+export const Route = createFileRoute('/')({ component: RouteComponent })
 
 function RouteComponent() {
   const { state, mutations, functions, features } = useShortenPage()
@@ -41,13 +40,12 @@ function RouteComponent() {
         </Button>
       </div>
 
-      <div className="h-6 text-red-500">
-        {features.urlField.error && t(features.urlField.error)}
-      </div>
-
+      <Typography variant="caption" className="mt-2 inline-block h-6 text-error">
+        {state.url && features.urlField.error && t(features.urlField.error)}
+      </Typography>
       <Button
         className="self-end mt-32 w-48"
-        disabled={state.isShortenDisabled}
+        disabled={mutations.shorten.isPending}
         onClick={functions.handleShorten}
       >
         {!mutations.shorten.isPending && state.isShortened && t('button.clear')}

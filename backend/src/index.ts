@@ -1,5 +1,6 @@
 import { Application } from '@enshou/core'
-import { OpenApiBuilder, scalarUi } from '@enshou/openapi'
+import { CronPlugin } from '@enshou/cron'
+import { OpenApiPlugin } from '@enshou/openapi'
 import { toJsonSchema } from '@valibot/to-json-schema'
 import { cors } from 'hono/cors'
 
@@ -35,7 +36,7 @@ declare module '@enshou/core' {
 
 process.on('SIGINT', () => process.exit(0))
 
-const app = new Application({
+const application = new Application({
   controllers: [ShortenerController],
   providers: [
     { provide: DB, useValue: db },
@@ -52,15 +53,22 @@ const app = new Application({
   ],
   errorHandler: ErrorHandler,
   middlewares: [cors(), LOGGER_MIDDLEWARE],
+  plugins: [
+    CronPlugin({ jobs: [] }),
+    OpenApiPlugin({
+      openapi: {
+        path: '/api/openapi.json',
+        info: { title: 'Shurl', version: '1.0.0' },
+        resolver: { toJsonSchema },
+        servers: [{ url: 'http://localhost:3113' }],
+      },
+      scalar: { path: '/docs' },
+    }),
+  ],
 })
 
-const openapi = new OpenApiBuilder({
-  info: { title: 'Shurl', version: '1.0.0' },
-  controllers: app.controllers,
-  schemaConverter: { toJsonSchema },
-}).toDocument()
+const hono = await application.instantiate()
 
-export default (await app.instantiate())
-  .get('/api/openapi.json', (c) => c.json(openapi))
-  .get('/api/docs', scalarUi({ specUrl: '/api/openapi.json' }))
-  .get('/api/health', (c) => c.text('ok'))
+hono.get('/api/health', (c) => c.text('ok'))
+
+export default hono

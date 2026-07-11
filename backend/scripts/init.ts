@@ -1,8 +1,10 @@
+// oxlint-disable no-await-in-loop
+
 import { SQL } from 'bun'
 import { drizzle } from 'drizzle-orm/bun-sql'
 import { migrate } from 'drizzle-orm/bun-sql/migrator'
 import { readdir } from 'node:fs/promises'
-import { join } from 'node:path'
+import path from 'node:path'
 
 import { clickhouse } from '#/lib/clickhouse'
 import { redis } from '#/lib/redis'
@@ -38,7 +40,7 @@ async function initClickhouse() {
   const appliedRows = await rs.json<{ version: number }>()
   const appliedVersions = new Set(appliedRows.map((r) => r.version))
 
-  const migrationsDir = join(process.cwd(), 'clickhouse')
+  const migrationsDir = path.join(process.cwd(), 'clickhouse')
   const files = (await readdir(migrationsDir)).sort()
 
   for (const file of files) {
@@ -47,7 +49,7 @@ async function initClickhouse() {
     if (appliedVersions.has(version)) continue
 
     console.log(`[ClickHouse] Applying migration: ${file}`)
-    const sql = await Bun.file(join(migrationsDir, file)).text()
+    const sql = await Bun.file(path.join(migrationsDir, file)).text()
 
     await clickhouse.command({ query: sql })
 
@@ -67,9 +69,8 @@ async function initRedis() {
     await redis.send('CF.RESERVE', [GUEST_URLS_FILTER_KEY, String(GUEST_URLS_FILTER_CAPACITY)])
     console.log('[Redis] Bloom filter reserved successfully')
   } catch (error) {
-    if (error instanceof Error && !error.message.toLowerCase().includes('exists')) {
-      throw error
-    }
+    if (error instanceof Error && !error.message.toLowerCase().includes('exists')) throw error
+
     console.log('[Redis] Bloom filter already exists')
   }
 }

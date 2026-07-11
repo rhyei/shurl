@@ -1,13 +1,11 @@
 import type { PgSequence } from 'drizzle-orm/pg-core'
 
-import { createToken, Inject } from '@enshou/di'
+import { Inject, token } from '@enshou/di'
 import { sql } from 'drizzle-orm'
 
 import type { Db } from '#/database'
 
 import { DB } from '#/database'
-
-export const SEQUENCE_SERVICE = createToken<SequenceService>('SequenceService')
 
 interface SequenceState {
   currentValue: number
@@ -32,8 +30,8 @@ export class SequenceService {
     }
 
     while (sequenceState.currentValue >= sequenceState.maxValue) {
-      if (!sequenceState.fetchPromise)
-        sequenceState.fetchPromise = this.fetchNextBlock(name, increment, sequenceState)
+      sequenceState.fetchPromise ??= this.fetchNextBlock(name, increment, sequenceState)
+      // oxlint-disable-next-line no-await-in-loop
       await sequenceState.fetchPromise
     }
 
@@ -51,3 +49,5 @@ export class SequenceService {
     }
   }
 }
+
+export const SEQUENCE_SERVICE = token<SequenceService>('SequenceService')

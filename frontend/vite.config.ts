@@ -5,20 +5,15 @@ import react from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
 import unoCss from 'unocss/vite'
 import { defineConfig } from 'vite'
-import 'dotenv/config'
 
 export default defineConfig(({ command }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     tanstackDevtools(),
-    unoCss({
-      mode: command === 'build' ? 'per-module' : 'global',
-    }),
+    unoCss({ mode: command === 'build' ? 'per-module' : 'global' }),
     kanjou({
       sourceLocalePath: './src/assets/locales/en.json',
-      dts: {
-        outputDirectory: './generated',
-      },
+      dts: { outputDirectory: './generated' },
     }),
     tanstackStart({
       router: {
@@ -29,12 +24,8 @@ export default defineConfig(({ command }) => ({
     react(),
     nitro({
       preset: 'bun',
-      output: {
-        dir: 'dist',
-      },
-      routeRules: {
-        '/api/**': { proxy: `${process.env.BACKEND_URL}/api/**` },
-      },
+      output: { dir: 'dist' },
+      routeRules: { '/api/**': { proxy: `${Bun.env.BACKEND_URL}/api/**` } },
     }),
   ],
 }))

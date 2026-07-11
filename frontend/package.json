@@ -4,20 +4,21 @@
   "scripts": {
     "dev": "bunx --bun vite dev --port 3114",
     "prod": "bun dist/server/index.mjs",
-    "build": "vite build",
+    "build": "bunx --bun vite build",
     "gen:routes": "tsr generate",
     "gen:api": "openapi-ts -f heyapi.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
-    "@kanjou/react": "^0.0.11",
+    "@kanjou/react": "^0.0.17",
+    "@tanstack/react-form": "^1.33.1",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-ssr-query": "^1.167.1",
     "@tanstack/react-start": "latest",
+    "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "ofetch": "^1.5.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
@@ -25,8 +26,8 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
-    "@iconify-json/material-symbols": "^1.2.82",
-    "@kanjou/vite": "^0.0.10",
+    "@iconify-json/material-symbols": "^1.2.83",
+    "@kanjou/vite": "^0.0.20",
     "@tanstack/devtools-vite": "^0.8.1",
     "@tanstack/react-devtools": "^0.10.8",
     "@tanstack/react-query-devtools": "^5.101.2",
@@ -36,14 +37,13 @@
     "@types/bun": "catalog:",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@unocss/eslint-config": "^66.7.4",
-    "@unocss/reset": "^66.7.4",
+    "@unocss/eslint-config": "^66.7.5",
+    "@unocss/reset": "^66.7.5",
     "@vitejs/plugin-react": "^6.0.3",
-    "dotenv": "^17.4.2",
     "nitro": "3.0.260610-beta",
     "oxfmt": "catalog:",
     "typescript": "catalog:",
-    "unocss": "^66.7.4",
-    "vite": "^8.1.3"
+    "unocss": "^66.7.5",
+    "vite": "^8.1.4"
   }
 }

@@ -6,7 +6,10 @@ import { routeTree } from '../generated/routeTree.gen'
 
 export function getRouter() {
   const queryClient = new QueryClient()
-  const router = createTanStackRouter({ routeTree, context: { queryClient } })
+  const router = createTanStackRouter({
+    routeTree,
+    context: { queryClient },
+  })
 
   setupRouterSsrQueryIntegration({ router, queryClient })
 

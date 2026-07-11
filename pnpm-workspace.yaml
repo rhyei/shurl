@@ -3,7 +3,7 @@ packages:
   - 'frontend'
 
 catalog:
-  typescript: '^7.0.2'
+  typescript: '6.0.3'
   '@types/bun': '^1.3.14'
   valibot: '^1.4.2'
   oxfmt: '^0.58.0'
@@ -20,3 +20,4 @@ minimumReleaseAgeExclude:
   - '@kanjou/config'
   - '@kanjou/react'
   - '@kanjou/vite'
+  - '@enshou/cron'

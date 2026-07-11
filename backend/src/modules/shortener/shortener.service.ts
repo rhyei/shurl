@@ -1,7 +1,7 @@
 import type { Logger } from '@logtape/logtape'
 
 import { RestException } from '@enshou/core'
-import { createToken, Inject } from '@enshou/di'
+import { Inject, token } from '@enshou/di'
 import { eq } from 'drizzle-orm'
 
 import type { CacheService } from '#/common/interfaces/cache-service'
@@ -17,16 +17,14 @@ import { encodeBase62 } from '#/utils/encode-base62'
 
 import { getShortUrlKey, SHORT_URL_TTL, GUEST_URLS_FILTER_KEY } from './config'
 
-export const SHORTENER_SERVICE = createToken('ShortenerService')
-
-@Inject(LOGGER, SEQUENCE_SERVICE, DB, CACHE_SERVICE, DYNAMIC_FILTER_SERVICE)
+@Inject(LOGGER, DB, SEQUENCE_SERVICE, CACHE_SERVICE, DYNAMIC_FILTER_SERVICE)
 export class ShortenerService {
   constructor(
-    private readonly logger: Logger,
-    private readonly sequence: SequenceService,
-    private readonly db: Db,
-    private readonly cache: CacheService,
-    private readonly dynamicFilter: DynamicFilterService,
+    private logger: Logger,
+    private db: Db,
+    private sequence: SequenceService,
+    private cache: CacheService,
+    private dynamicFilter: DynamicFilterService,
   ) {}
 
   async shorten(originalUrl: string) {
@@ -52,17 +50,21 @@ export class ShortenerService {
   async resolve(id: string) {
     this.logger.debug(`{requestId} Resolving short URL {id}`, { id })
 
-    const exists = await this.dynamicFilter.exists(GUEST_URLS_FILTER_KEY, id)
-    if (!exists) {
+    const urlExists = await this.dynamicFilter.exists(GUEST_URLS_FILTER_KEY, id)
+    if (!urlExists) {
       this.logger.debug(`{requestId} Id {id} rejected by bloom filter`, { id })
       throw new RestException(404)
     }
 
-    const originalUrl = await this.cache.remember(getShortUrlKey(id), SHORT_URL_TTL, async () => {
-      this.logger.debug(`{requestId} Cache miss for {id}, querying database`, { id })
-      const url = await this.db.select().from(guestUrls).where(eq(guestUrls.id, id))
-      return url[0]?.originalUrl
-    })
+    const originalUrl = await this.cache.rememberAndProlong(
+      getShortUrlKey(id),
+      SHORT_URL_TTL,
+      async () => {
+        this.logger.debug(`{requestId} Cache miss for {id}, querying database`, { id })
+        const url = await this.db.select().from(guestUrls).where(eq(guestUrls.id, id))
+        return url[0]?.originalUrl
+      },
+    )
 
     if (!originalUrl) throw new RestException(404)
 
@@ -71,3 +73,5 @@ export class ShortenerService {
     return originalUrl
   }
 }
+
+export const SHORTENER_SERVICE = token(ShortenerService)

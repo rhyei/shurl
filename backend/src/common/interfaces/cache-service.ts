@@ -3,5 +3,14 @@ export interface CacheService {
   set(key: string, value: string, ttl?: number): Promise<void>
   delete(key: string): Promise<void>
   expire(key: string, ttl: number): Promise<void>
-  remember<T>(key: string, ttl: number, callback: () => Promise<T> | T): Promise<T>
+  rememberFor<Value>(
+    key: string,
+    ttl: number,
+    callback: () => Promise<Value> | Value,
+  ): Promise<Value>
+  rememberAndProlong<Value>(
+    key: string,
+    ttl: number,
+    callback: () => Promise<Value> | Value,
+  ): Promise<Value>
 }

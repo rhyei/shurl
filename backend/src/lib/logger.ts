@@ -1,7 +1,7 @@
 import type { UseFactory } from '@enshou/di'
 import type { Logger } from '@logtape/logtape'
 
-import { createToken } from '@enshou/di'
+import { token } from '@enshou/di'
 import { getFileSink } from '@logtape/file'
 import { configure, getConsoleSink, getLogger, jsonLinesFormatter } from '@logtape/logtape'
 import { prettyFormatter } from '@logtape/pretty'
@@ -25,9 +25,9 @@ await configure({
   contextLocalStorage: new AsyncLocalStorage(),
 })
 
-export const LOGGER = createToken<Logger>('Logger')
-
 export const loggerFactory: UseFactory<Logger> = (_container, context) => {
   const logger = getLogger(context.parent!.useClass!.name)
   return logger
 }
+
+export const LOGGER = token<Logger>('Logger')

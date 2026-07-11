@@ -19,7 +19,8 @@ export default defineConfig({
       muted: '#414141',
       brand: '#eb6822',
       success: '#22c55e',
-      selection: '#eb68223f',
+      error: '#ef4444',
+      selection: '#eb682215',
     },
   },
 })
