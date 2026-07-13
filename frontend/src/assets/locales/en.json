@@ -1,10 +1,14 @@
 {
   "input.shorten.placeholder": "https://google.com/...",
-  "input.shorten.placeholder-highlight": "Enter an URL to shorten",
+  "input.shorten.placeholder-alert": "Enter an URL to shorten",
   "button.shorten": "Shorten",
   "button.clear": "Clear",
   "validation.invalid-url": "Invalid URL",
+  "button.copy-shortened.title": "Copy shortened URL",
+  "button.copy-shortened.aria-label": "Copy shortened URL",
   "error.server": "Server error. Please try again.",
   "error.network": "Failed to connect to the server. Please, try again.",
-  "error.offline": "You are offline. Please check your connection and try again."
+  "error.offline": "You are offline. Please check your connection and try again.",
+  "error.ratelimit": "You are being rate-limited. Please, ensure that your browser supports Google reCAPTCHA v3.",
+  "recaptcha": "This site is protected by reCAPTCHA"
 }

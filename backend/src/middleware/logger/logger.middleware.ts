@@ -1,19 +1,19 @@
 import type { Middleware } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
-import type { Context, Next } from 'hono'
+import type { MiddlewareHandler } from 'hono'
 
 import { Inject, token } from '@enshou/di'
 import { withContext } from '@logtape/logtape'
 
 import { LOGGER } from '#/lib/logger'
 
-export const REQUEST_ID_HEADER = 'x-request-id'
+import { REQUEST_ID_HEADER } from './config'
 
 @Inject(LOGGER)
 export class LoggerMiddleware implements Middleware {
   constructor(private logger: Logger) {}
 
-  async handle(c: Context, next: Next) {
+  handle: MiddlewareHandler = async (c, next) => {
     const time = Date.now()
 
     const requestId = c.req.header(REQUEST_ID_HEADER) ?? crypto.randomUUID()

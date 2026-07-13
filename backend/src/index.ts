@@ -19,12 +19,14 @@ import { ErrorHandler } from '#/error-handler'
 import { clickhouse, CLICKHOUSE } from '#/lib/clickhouse'
 import { LOGGER, loggerFactory } from '#/lib/logger'
 import { redis, REDIS } from '#/lib/redis'
-import { LOGGER_MIDDLEWARE, LoggerMiddleware } from '#/middleware/logger.middleware'
+import { LOGGER_MIDDLEWARE, LoggerMiddleware } from '#/middleware/logger'
 import { ShortenerController, ShortenerService, SHORTENER_SERVICE } from '#/modules/shortener'
 import {
   GO_EVENT_TRACKER_MIDDLEWARE,
   GoEventTrackerMiddleware,
-} from '#/modules/shortener/middleware/go-event-tracker.middleware'
+  RATE_LIMIT_SHORTEN_MIDDLEWARE,
+  RateLimitShortenMiddleware,
+} from '#/modules/shortener/middleware'
 
 declare module '@enshou/core' {
   interface GlobalEnv {
@@ -49,6 +51,7 @@ const application = new Application({
     { provide: LOGGER, useFactory: loggerFactory, scope: 'transient' },
     { provide: GO_EVENT_TRACKER_MIDDLEWARE, useClass: GoEventTrackerMiddleware },
     { provide: LOGGER_MIDDLEWARE, useClass: LoggerMiddleware },
+    { provide: RATE_LIMIT_SHORTEN_MIDDLEWARE, useClass: RateLimitShortenMiddleware },
     { provide: SHORTENER_SERVICE, useClass: ShortenerService },
   ],
   errorHandler: ErrorHandler,

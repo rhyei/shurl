@@ -1,8 +1,13 @@
+import type { SubmitEventHandler } from 'react'
+
+import { useGoogleReCaptcha } from '@google-recaptcha/react'
 import { useI18n } from '@kanjou/react'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError, isAxiosError } from 'axios'
 import { useEffect, useRef } from 'react'
 import * as v from 'valibot'
+
+import type { TimeoutId } from '#/types'
 
 import { postApiShortenMutation } from '#/api/tanstack'
 import { validateAdapter } from '#/app/-utils/validate-adapter'
@@ -19,6 +24,8 @@ const UrlFieldSchema = v.pipe(
 export function useShortenPage() {
   const { t } = useI18n()
 
+  const googleReCaptcha = useGoogleReCaptcha()
+
   const { copy, copied: isCopied } = useCopy()
 
   const urlField = useField('', {
@@ -28,44 +35,60 @@ export function useShortenPage() {
 
   const shortenMutation = useMutation(postApiShortenMutation())
 
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const timeoutRef = useRef<TimeoutId | undefined>(undefined)
 
-  const handleShorten = async () => {
-    if (!url) {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-      const originalPlaceholder = urlField.ref.current!.placeholder
-
-      urlField.ref.current!.placeholder = t('input.shorten.placeholder-highlight')
-      urlField.focus()
-
-      timeoutRef.current = setTimeout(() => {
-        if (timeoutRef.current) urlField.ref.current!.placeholder = originalPlaceholder
-      }, 1500)
-
-      return
-    }
-
-    if (isShortened) {
-      urlField.setValue('')
-      shortenMutation.reset()
-      return
-    }
-
+  const shorten = async () => {
     try {
+      const googleReCaptchaToken = await googleReCaptcha
+        .executeV3?.('shorten')
+        .catch(() => undefined)
+
       const shortenResponse = await shortenMutation.mutateAsync({
-        body: { url: /^https?:\/\//i.test(url) ? url : `https://${url}` },
+        body: {
+          url: /^https?:\/\//i.test(url) ? url : `https://${url}`,
+          googleReCaptcha: googleReCaptchaToken,
+        },
       })
 
       urlField.setValue(shortenResponse.shortUrl)
+      urlField.setError('')
     } catch (error) {
       if (!isAxiosError(error)) throw error
       if (error.code === AxiosError.ERR_NETWORK && window.navigator.onLine)
         urlField.setError('error.network')
       if (error.code === AxiosError.ERR_NETWORK && !window.navigator.onLine)
         urlField.setError('error.offline')
+      if (error.status === 429) return urlField.setError('error.ratelimit')
       if (error.status! < 200 || error.status! >= 300) urlField.setError('error.server')
     }
+  }
+
+  const handleClick = () => {
+    if (isShortened) {
+      urlField.setValue('')
+      shortenMutation.reset()
+      return
+    }
+
+    if (!url) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+      urlField.ref.current!.placeholder = t('input.shorten.placeholder-alert')
+      urlField.focus()
+
+      timeoutRef.current = setTimeout(() => {
+        urlField.ref.current!.placeholder = t('input.shorten.placeholder')
+      }, 1500)
+
+      return
+    }
+
+    void shorten()
+  }
+
+  const handleSubmit: SubmitEventHandler = (event) => {
+    event.preventDefault()
+    void shorten()
   }
 
   const handleCopy = () => {
@@ -75,12 +98,7 @@ export function useShortenPage() {
   const url = urlField.watch()
   const isShortened = url === shortenMutation.data?.shortUrl && shortenMutation.isSuccess
 
-  useEffect(
-    () => () => {
-      clearTimeout(timeoutRef.current ?? undefined)
-    },
-    [],
-  )
+  useEffect(() => () => clearTimeout(timeoutRef.current), [])
 
   return {
     state: {
@@ -93,7 +111,8 @@ export function useShortenPage() {
     },
     functions: {
       handleCopy,
-      handleShorten,
+      handleClick,
+      handleSubmit,
     },
     features: {
       urlField,

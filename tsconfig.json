@@ -1,5 +1,4 @@
 {
   "references": [{ "path": "./scripts" }, { "path": "./backend" }, { "path": "./frontend" }],
-  "compilerOptions": {},
   "files": []
 }

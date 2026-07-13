@@ -6,7 +6,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         contained:
-          'bg-surface text-brand hover:enabled:bg-surface/70 transition-all disabled:cursor-default disabled:opacity-80',
+          'bg-surface text-brand hover:enabled:bg-surface/80 transition-all disabled:cursor-default disabled:opacity-80 outline-transparent outline-offset-2 outline-2 focus-visible:outline-brand/70',
       },
       size: {
         'lg': 'h-12 px-12 text-2xl font-medium flex items-center justify-center tracking-tight',

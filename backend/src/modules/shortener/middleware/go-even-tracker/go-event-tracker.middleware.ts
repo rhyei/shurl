@@ -8,6 +8,7 @@ import { isbot } from 'isbot'
 import type { EventTrackerService } from '#/common/interfaces/event-tracker-service'
 
 import { EVENT_TRACKER_SERVICE } from '#/common/services/clickhouse-event-tracker-service'
+import { extractIpFromHeader } from '#/utils/extract-ip-from-header'
 
 @Inject(EVENT_TRACKER_SERVICE)
 export class GoEventTrackerMiddleware implements Middleware {
@@ -15,7 +16,7 @@ export class GoEventTrackerMiddleware implements Middleware {
 
   async handle(c: Context, next: Next) {
     const userAgent = c.req.header('user-agent')
-    const userIp = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+    const userIp = extractIpFromHeader(c.req.header('x-forwarded-for'))
 
     void this.eventTracker.trackGo({
       short_id: c.req.param('id')!,

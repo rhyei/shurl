@@ -5,10 +5,9 @@ import { Inject } from '@enshou/di'
 import { ApiOperation, ApiTag } from '@enshou/openapi'
 import { validate } from '@enshou/valibot'
 
-import { GO_EVENT_TRACKER_MIDDLEWARE } from '#/modules/shortener/middleware'
-
 import type { ShortenerService } from './shortener.service'
 
+import { GO_EVENT_TRACKER_MIDDLEWARE, RATE_LIMIT_SHORTEN_MIDDLEWARE } from './middleware'
 import { GoSchema, ShortenSchema, ShortenResponse } from './schemas'
 import { SHORTENER_SERVICE } from './shortener.service'
 
@@ -22,15 +21,15 @@ export class ShortenerController {
     summary: 'Shorten an URL',
     schema: ShortenSchema,
     responses: {
-      200: { description: 'Successfully shortened an URL', schema: ShortenResponse },
+      201: { description: 'Successfully shortened an URL', schema: ShortenResponse },
     },
   })
-  @Use(...validate(ShortenSchema))
+  @Use(...validate(ShortenSchema), RATE_LIMIT_SHORTEN_MIDDLEWARE)
   @Post('/api/shorten')
   async shorten(c: Ctx<ShortenSchema>) {
-    const { url } = c.req.valid('json')
-    const data = await this.shortener.shorten(url)
-    return c.json(data)
+    const body = c.req.valid('json')
+    const data = await this.shortener.shorten(body.url)
+    return c.json(data, 201)
   }
 
   @ApiOperation({
@@ -43,8 +42,8 @@ export class ShortenerController {
   @Use(...validate(GoSchema), GO_EVENT_TRACKER_MIDDLEWARE)
   @Get('/g/:id')
   async go(c: Ctx<GoSchema>) {
-    const { id } = c.req.valid('param')
-    const originalUrl = await this.shortener.resolve(id)
+    const params = c.req.valid('param')
+    const originalUrl = await this.shortener.resolve(params.id)
     return c.redirect(originalUrl, 302)
   }
 }

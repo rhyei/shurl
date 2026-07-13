@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
+import { GoogleReCaptchaProvider } from '@google-recaptcha/react'
 import { I18nProvider } from '@kanjou/react'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
@@ -9,8 +10,10 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
 import { getLocale } from './-utils/locale'
 
-import localeLoaders from 'virtual:kanjou/modules'
 import 'virtual:uno.css'
+import localeLoaders from 'virtual:kanjou/modules'
+
+import '#/assets/styles/global.css'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -42,9 +45,11 @@ function Root({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="bg-background text-foreground min-h-screen font-mono antialiased selection:bg-selection">
-        <I18nProvider locale={locale} messages={messages}>
-          {children}
-        </I18nProvider>
+        <GoogleReCaptchaProvider type="v3" siteKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_KEY}>
+          <I18nProvider locale={locale} messages={messages}>
+            {children}
+          </I18nProvider>
+        </GoogleReCaptchaProvider>
         <TanStackDevtools
           plugins={[
             { name: 'TanStack Query', render: <ReactQueryDevtoolsPanel /> },

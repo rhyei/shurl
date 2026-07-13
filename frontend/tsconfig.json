@@ -20,11 +20,12 @@
     "strict": true
   },
   "include": [
-    "src/**/*",
-    "generated/**/*",
-    "heyapi.config.ts",
-    "oxfmt.config.ts",
-    "vite.config.ts",
+    "./src/**/*",
+    "./generated/**/*",
+    "./heyapi.config.ts",
+    "./oxfmt.config.ts",
+    "./vite.config.ts",
+    "./env.d.ts",
     "../oxfmt.config.ts"
   ]
 }

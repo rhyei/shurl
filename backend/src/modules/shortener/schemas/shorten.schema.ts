@@ -6,8 +6,12 @@ import * as v from 'valibot'
 export const ShortenSchema = {
   json: v.object({
     url: v.pipe(v.string(), v.url(), v.description('The URL to shorten.')),
+    googleReCaptcha: v.pipe(
+      v.optional(v.string()),
+      v.description('Required if you are creating more than 5 links per hour.'),
+    ),
   }),
-} as const satisfies RouteSchema
+} satisfies RouteSchema
 export type ShortenSchema = InferSchema<typeof ShortenSchema>
 
 export const ShortenResponse = defineSchema(

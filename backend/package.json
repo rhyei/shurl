@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@clickhouse/client": "^1.23.1",
-    "@enshou/core": "^0.12.8",
+    "@enshou/core": "^0.12.10",
     "@enshou/cron": "^0.0.6",
     "@enshou/di": "^0.8.8",
     "@enshou/openapi": "0.2.9",
