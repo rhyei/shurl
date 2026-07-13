@@ -8,12 +8,18 @@ import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
-import { getLocale } from './-utils/locale'
+import { client } from '#/api/client'
 
 import 'virtual:uno.css'
-import localeLoaders from 'virtual:kanjou/modules'
+import { getLocale } from './-utils/locale'
 
 import '#/assets/styles/global.css'
+
+import localeLoaders from 'virtual:kanjou/modules'
+
+client.setConfig({
+  baseURL: typeof window === 'undefined' ? Bun.env.BACKEND_URL : '',
+})
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({

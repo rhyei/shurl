@@ -50,11 +50,7 @@ function RouteComponent() {
         {state.url && features.urlField.error && t(features.urlField.error)}
       </Typography>
 
-      <Button
-        className="self-end mt-32 w-48"
-        disabled={mutations.shorten.isPending}
-        onClick={functions.handleClick}
-      >
+      <Button className="self-end mt-32 w-48" disabled={mutations.shorten.isPending} type="submit">
         {!mutations.shorten.isPending && state.isShortened && t('button.clear')}
         {!mutations.shorten.isPending && !state.isShortened && t('button.shorten')}
         {mutations.shorten.isPending && <Loader />}

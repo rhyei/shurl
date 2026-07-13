@@ -5,3 +5,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+declare module 'bun' {
+  interface Env {
+    BACKEND_URL: string
+  }
+}

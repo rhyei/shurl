@@ -37,7 +37,28 @@ export function useShortenPage() {
 
   const timeoutRef = useRef<TimeoutId | undefined>(undefined)
 
-  const shorten = async () => {
+  const handleSubmit: SubmitEventHandler = async (event) => {
+    event.preventDefault()
+
+    if (isShortened) {
+      urlField.setValue('')
+      shortenMutation.reset()
+      return
+    }
+
+    if (!url) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+      urlField.ref.current!.placeholder = t('input.shorten.placeholder-alert')
+      urlField.focus()
+
+      timeoutRef.current = setTimeout(() => {
+        urlField.ref.current!.placeholder = t('input.shorten.placeholder')
+      }, 1500)
+
+      return
+    }
+
     try {
       const googleReCaptchaToken = await googleReCaptcha
         .executeV3?.('shorten')
@@ -63,34 +84,6 @@ export function useShortenPage() {
     }
   }
 
-  const handleClick = () => {
-    if (isShortened) {
-      urlField.setValue('')
-      shortenMutation.reset()
-      return
-    }
-
-    if (!url) {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-      urlField.ref.current!.placeholder = t('input.shorten.placeholder-alert')
-      urlField.focus()
-
-      timeoutRef.current = setTimeout(() => {
-        urlField.ref.current!.placeholder = t('input.shorten.placeholder')
-      }, 1500)
-
-      return
-    }
-
-    void shorten()
-  }
-
-  const handleSubmit: SubmitEventHandler = (event) => {
-    event.preventDefault()
-    void shorten()
-  }
-
   const handleCopy = () => {
     if (shortenMutation.data) void copy(shortenMutation.data.shortUrl)
   }
@@ -111,7 +104,6 @@ export function useShortenPage() {
     },
     functions: {
       handleCopy,
-      handleClick,
       handleSubmit,
     },
     features: {
