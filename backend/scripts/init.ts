@@ -38,7 +38,11 @@ async function initClickhouse() {
   })
 
   const appliedRows = await rs.json<{ version: number }>()
-  const appliedVersions = new Set(appliedRows.map((r) => r.version))
+  const appliedVersions = new Set(
+    appliedRows.map((r) => {
+      return r.version
+    }),
+  )
 
   const migrationsDir = path.join(process.cwd(), 'clickhouse')
   const files = (await readdir(migrationsDir)).sort()

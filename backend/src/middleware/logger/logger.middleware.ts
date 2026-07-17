@@ -1,17 +1,16 @@
-import type { Middleware } from '@enshou/core'
+import type { EnshouMiddleware, Token } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
 import type { MiddlewareHandler } from 'hono'
 
-import { Inject, token } from '@enshou/di'
+import { Inject } from '@enshou/core'
 import { withContext } from '@logtape/logtape'
 
 import { LOGGER } from '#/lib/logger'
 
 import { REQUEST_ID_HEADER } from './config'
 
-@Inject(LOGGER)
-export class LoggerMiddleware implements Middleware {
-  constructor(private logger: Logger) {}
+export class LoggerMiddleware implements EnshouMiddleware {
+  @Inject(LOGGER) logger!: Logger
 
   handle: MiddlewareHandler = async (c, next) => {
     const time = Date.now()
@@ -29,4 +28,4 @@ export class LoggerMiddleware implements Middleware {
   }
 }
 
-export const LOGGER_MIDDLEWARE = token(LoggerMiddleware)
+export const LOGGER_MIDDLEWARE = Symbol() as Token<LoggerMiddleware>

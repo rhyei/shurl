@@ -1,7 +1,7 @@
-import type { Middleware } from '@enshou/core'
+import type { EnshouMiddleware, Token } from '@enshou/core'
 import type { Context, Next } from 'hono'
 
-import { Inject, token } from '@enshou/di'
+import { Inject } from '@enshou/core'
 import { lookup } from 'ip-location-api'
 import { isbot } from 'isbot'
 
@@ -10,9 +10,8 @@ import type { EventTrackerService } from '#/common/interfaces/event-tracker-serv
 import { EVENT_TRACKER_SERVICE } from '#/common/services/clickhouse-event-tracker-service'
 import { extractIpFromHeader } from '#/utils/extract-ip-from-header'
 
-@Inject(EVENT_TRACKER_SERVICE)
-export class GoEventTrackerMiddleware implements Middleware {
-  constructor(private eventTracker: EventTrackerService) {}
+export class GoEventTrackerMiddleware implements EnshouMiddleware {
+  @Inject(EVENT_TRACKER_SERVICE) eventTracker!: EventTrackerService
 
   async handle(c: Context, next: Next) {
     const userAgent = c.req.header('user-agent')
@@ -31,4 +30,4 @@ export class GoEventTrackerMiddleware implements Middleware {
   }
 }
 
-export const GO_EVENT_TRACKER_MIDDLEWARE = token(GoEventTrackerMiddleware)
+export const GO_EVENT_TRACKER_MIDDLEWARE = Symbol() as Token<GoEventTrackerMiddleware>

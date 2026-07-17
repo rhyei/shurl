@@ -1,6 +1,7 @@
+import type { Token } from '@enshou/core'
 import type { PgSequence } from 'drizzle-orm/pg-core'
 
-import { Inject, token } from '@enshou/di'
+import { Inject } from '@enshou/core'
 import { sql } from 'drizzle-orm'
 
 import type { Db } from '#/database'
@@ -13,11 +14,9 @@ interface SequenceState {
   fetchPromise: Promise<void> | null
 }
 
-@Inject(DB)
 export class SequenceService {
+  @Inject(DB) db!: Db
   private readonly sequences = new Map<string, SequenceState>()
-
-  constructor(private readonly db: Db) {}
 
   async nextValue(sequence: PgSequence): Promise<number> {
     const name = sequence.seqName!
@@ -31,7 +30,6 @@ export class SequenceService {
 
     while (sequenceState.currentValue >= sequenceState.maxValue) {
       sequenceState.fetchPromise ??= this.fetchNextBlock(name, increment, sequenceState)
-      // oxlint-disable-next-line no-await-in-loop
       await sequenceState.fetchPromise
     }
 
@@ -50,4 +48,4 @@ export class SequenceService {
   }
 }
 
-export const SEQUENCE_SERVICE = token<SequenceService>('SequenceService')
+export const SEQUENCE_SERVICE = Symbol() as Token<SequenceService>

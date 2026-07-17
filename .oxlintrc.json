@@ -3,14 +3,16 @@
   "plugins": ["oxc", "typescript", "unicorn", "import"],
   "categories": { "perf": "error", "correctness": "error" },
   "rules": {
+    "eslint/no-await-in-loop": "off",
+
     "eslint/no-useless-assignment": "error",
     "eslint/array-callback-return": "error",
     "eslint/max-classes-per-file": "error",
     "eslint/eqeqeq": "error",
     "eslint/no-useless-return": "error",
     "eslint/yoda": "error",
-    "eslint/arrow-body-style": ["error", "as-needed"],
-    "eslint/curly": ["error", "multi"],
+    "eslint/arrow-body-style": ["error", "always"],
+    "eslint/curly": ["error", "multi-line"],
     "eslint/no-nested-ternary": "error",
     "eslint/no-template-curly-in-string": "error",
     "eslint/prefer-const": "error",

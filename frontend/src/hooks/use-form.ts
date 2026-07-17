@@ -170,17 +170,19 @@ export const useForm = <Values extends Record<string, any>>(
     const node = nodesRef.current.get(name)
     if (!node) return initialRef.current[name]
 
-    if ('checked' in node && (node.type === 'radio' || node.type === 'checkbox'))
+    if ('checked' in node && (node.type === 'radio' || node.type === 'checkbox')) {
       return node.checked as Values[Name]
+    }
 
     return node.value as Values[Name]
   }
 
-  const getValues = () =>
-    Object.keys(initialRef.current).reduce((acc, key) => {
+  const getValues = () => {
+    return Object.keys(initialRef.current).reduce((acc, key) => {
       acc[key as keyof Values] = read(key)
       return acc
     }, {} as Values)
+  }
 
   const setValue = <Name extends keyof Values>(name: Name, value: Values[Name]) => {
     const node = nodesRef.current.get(name)
@@ -196,7 +198,9 @@ export const useForm = <Values extends Record<string, any>>(
     if (watchingRef.current) rerender()
   }
 
-  const focus = (name: keyof Values) => nodesRef.current.get(name)?.focus()
+  const focus = (name: keyof Values) => {
+    return nodesRef.current.get(name)?.focus()
+  }
 
   const validate = async (name: keyof Values): Promise<string | null> => {
     const params = paramsRef.current.get(name)
@@ -220,25 +224,31 @@ export const useForm = <Values extends Record<string, any>>(
     return null
   }
 
-  const setError = (name: keyof Values, error: string) =>
-    setErrors((currentErrors) => ({ ...currentErrors, [name]: error }))
+  const setError = (name: keyof Values, error: string) => {
+    return setErrors((currentErrors) => {
+      return { ...currentErrors, [name]: error }
+    })
+  }
 
   const reset = (values?: Partial<Values>) => {
     initialRef.current = { ...initialRef.current, ...values }
-    nodesRef.current.forEach((_, name) => setValue(name, initialRef.current[name]))
+    nodesRef.current.forEach((_, name) => {
+      return setValue(name, initialRef.current[name])
+    })
     setDirty({})
     setTouched({})
     setErrors({})
     rerender()
   }
 
-  const clearErrors = (name?: keyof Values) =>
-    setErrors((currentErrors) => {
+  const clearErrors = (name?: keyof Values) => {
+    return setErrors((currentErrors) => {
       if (!name) return {}
       const next = { ...currentErrors }
       delete next[name]
       return next
     })
+  }
 
   const watch = () => {
     watchingRef.current = true
@@ -264,7 +274,9 @@ export const useForm = <Values extends Record<string, any>>(
 
       setErrors((currentErrors) => {
         const cleared = { ...currentErrors }
-        names.forEach((key) => delete cleared[key])
+        names.forEach((key) => {
+          return delete cleared[key]
+        })
         return { ...cleared, ...next }
       })
 
@@ -284,7 +296,9 @@ export const useForm = <Values extends Record<string, any>>(
 
     setErrors((currentErrors) => {
       const cleared = { ...currentErrors }
-      names.forEach((key) => delete cleared[key])
+      names.forEach((key) => {
+        return delete cleared[key]
+      })
       return { ...cleared, ...next }
     })
 
@@ -338,16 +352,19 @@ export const useForm = <Values extends Record<string, any>>(
           return
         }
 
-        if (node instanceof HTMLTextAreaElement || node instanceof HTMLSelectElement)
+        if (node instanceof HTMLTextAreaElement || node instanceof HTMLSelectElement) {
           node.value = String(initial ?? '')
+        }
       },
       onChange: (async (event) => {
         if (watchingRef.current) rerender()
 
         const isDirty = read(name) !== initialRef.current[name]
-        setDirty((currentDirty) =>
-          currentDirty[name] === isDirty ? currentDirty : { ...currentDirty, [name]: isDirty },
-        )
+        setDirty((currentDirty) => {
+          return currentDirty[name] === isDirty
+            ? currentDirty
+            : { ...currentDirty, [name]: isDirty }
+        })
 
         if (validateOnChange) await runValidation(name)
         else if (validateOnBlur) clearErrors(name)
@@ -356,21 +373,20 @@ export const useForm = <Values extends Record<string, any>>(
       }) as ChangeEventHandler<UseFormElement>,
       onBlur: (async (event) => {
         if (validateOnBlur) await runValidation(name)
-        setTouched((currentTouched) =>
-          currentTouched[name] ? currentTouched : { ...currentTouched, [name]: true },
-        )
+        setTouched((currentTouched) => {
+          return currentTouched[name] ? currentTouched : { ...currentTouched, [name]: true }
+        })
 
         params?.onBlur?.(event)
       }) as FocusEventHandler<UseFormElement>,
     }
   }
 
-  const handleSubmit =
-    (
-      onValid: (values: Values, event?: BaseSyntheticEvent) => any,
-      onInvalid?: (errors: UseFormErrors<Values>, event?: BaseSyntheticEvent) => any,
-    ) =>
-    async (event?: BaseSyntheticEvent) => {
+  const handleSubmit = (
+    onValid: (values: Values, event?: BaseSyntheticEvent) => any,
+    onInvalid?: (errors: UseFormErrors<Values>, event?: BaseSyntheticEvent) => any,
+  ) => {
+    return async (event?: BaseSyntheticEvent) => {
       event?.preventDefault()
       setSubmitting(true)
 
@@ -397,6 +413,7 @@ export const useForm = <Values extends Record<string, any>>(
         setSubmitting(false)
       }
     }
+  }
 
   return {
     register,

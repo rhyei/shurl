@@ -1,7 +1,7 @@
+import type { Token } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
 
-import { RestException } from '@enshou/core'
-import { Inject, token } from '@enshou/di'
+import { HttpException, Inject } from '@enshou/core'
 import { eq } from 'drizzle-orm'
 
 import type { CacheService } from '#/common/interfaces/cache-service'
@@ -17,15 +17,12 @@ import { encodeBase62 } from '#/utils/encode-base62'
 
 import { getShortUrlKey, SHORT_URL_TTL, GUEST_URLS_FILTER_KEY } from './config'
 
-@Inject(LOGGER, DB, SEQUENCE_SERVICE, CACHE_SERVICE, DYNAMIC_FILTER_SERVICE)
 export class ShortenerService {
-  constructor(
-    private logger: Logger,
-    private db: Db,
-    private sequence: SequenceService,
-    private cache: CacheService,
-    private dynamicFilter: DynamicFilterService,
-  ) {}
+  @Inject(LOGGER) logger!: Logger
+  @Inject(DB) db!: Db
+  @Inject(SEQUENCE_SERVICE) sequence!: SequenceService
+  @Inject(CACHE_SERVICE) cache!: CacheService
+  @Inject(DYNAMIC_FILTER_SERVICE) dynamicFilter!: DynamicFilterService
 
   async shorten(originalUrl: string) {
     this.logger.debug(`{requestId} Shortening URL {originalUrl}`, { originalUrl })
@@ -53,7 +50,7 @@ export class ShortenerService {
     const urlExists = await this.dynamicFilter.exists(GUEST_URLS_FILTER_KEY, id)
     if (!urlExists) {
       this.logger.debug(`{requestId} Id {id} rejected by bloom filter`, { id })
-      throw new RestException(404)
+      throw new HttpException(404)
     }
 
     const originalUrl = await this.cache.rememberAndProlong(
@@ -66,7 +63,7 @@ export class ShortenerService {
       },
     )
 
-    if (!originalUrl) throw new RestException(404)
+    if (!originalUrl) throw new HttpException(404)
 
     this.logger.debug('{requestId} Resolved URL {originalUrl}', { originalUrl })
 
@@ -74,4 +71,4 @@ export class ShortenerService {
   }
 }
 
-export const SHORTENER_SERVICE = token(ShortenerService)
+export const SHORTENER_SERVICE = Symbol() as Token<ShortenerService>

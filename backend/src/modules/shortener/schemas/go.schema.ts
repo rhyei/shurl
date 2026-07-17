@@ -1,10 +1,16 @@
-import type { InferSchema, RouteSchema } from '@enshou/valibot'
+import type { RouteSchema } from '@enshou/valibot'
 
+import { defineSchema } from '@enshou/openapi'
 import * as v from 'valibot'
 
-export const GoSchema = {
-  param: v.object({
+const GoRouteParams = defineSchema(
+  'GoParams',
+  v.object({
     id: v.pipe(v.string(), v.regex(/^[a-zA-Z0-9]{1,6}$/), v.description('The short URL ID.')),
   }),
-} satisfies RouteSchema
-export type GoSchema = InferSchema<typeof GoSchema>
+)
+
+export const GoRoute = v.object({
+  param: GoRouteParams,
+}) satisfies RouteSchema
+export type GoRoute = v.InferOutput<typeof GoRoute>

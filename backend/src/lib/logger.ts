@@ -1,7 +1,6 @@
-import type { UseFactory } from '@enshou/di'
+import type { Token, UseFactory } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
 
-import { token } from '@enshou/di'
 import { getFileSink } from '@logtape/file'
 import { configure, getConsoleSink, getLogger, jsonLinesFormatter } from '@logtape/logtape'
 import { prettyFormatter } from '@logtape/pretty'
@@ -30,4 +29,4 @@ export const loggerFactory: UseFactory<Logger> = (_container, context) => {
   return logger
 }
 
-export const LOGGER = token<Logger>('Logger')
+export const LOGGER = Symbol() as Token<Logger>

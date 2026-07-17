@@ -1,14 +1,14 @@
+import type { Token } from '@enshou/core'
 import type { RedisClient } from 'bun'
 
-import { Inject, token } from '@enshou/di'
+import { Inject } from '@enshou/core'
 
 import type { DynamicFilterService } from '#/common/interfaces/dynamic-filter-service'
 
 import { REDIS } from '#/lib/redis'
 
-@Inject(REDIS)
 export class RedisDynamicFilterService implements DynamicFilterService {
-  constructor(private readonly redis: RedisClient) {}
+  @Inject(REDIS) redis!: RedisClient
 
   async exists(filterKey: string, value: string): Promise<boolean> {
     const result = await this.redis.send('CF.EXISTS', [filterKey, value])
@@ -24,4 +24,4 @@ export class RedisDynamicFilterService implements DynamicFilterService {
   }
 }
 
-export const DYNAMIC_FILTER_SERVICE = token(RedisDynamicFilterService)
+export const DYNAMIC_FILTER_SERVICE = Symbol() as Token<DynamicFilterService>

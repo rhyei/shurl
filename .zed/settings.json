@@ -1,9 +1,11 @@
 {
   "language_servers": [
-    "...",
     "!tailwindcss-language-server",
     "!typescript-language-server",
-    "!eslint"
+    "!eslint",
+    "!typescript-ls",
+    "vtsls",
+    "..."
   ],
   "format_on_save": "on",
   "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]

@@ -14,4 +14,8 @@ type UseRerenderReturn = () => void
  * @example
  * const rerender = useRerender();
  */
-export const useRerender = (): UseRerenderReturn => useReducer(() => ({}), {})[1]
+export const useRerender = (): UseRerenderReturn => {
+  return useReducer(() => {
+    return {}
+  }, {})[1]
+}

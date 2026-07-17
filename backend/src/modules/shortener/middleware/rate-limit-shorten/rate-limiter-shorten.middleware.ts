@@ -1,9 +1,8 @@
-import type { Middleware } from '@enshou/core'
+import type { EnshouMiddleware, Token } from '@enshou/core'
 import type { RedisClient } from 'bun'
 import type { MiddlewareHandler } from 'hono'
 
-import { RestException } from '@enshou/core'
-import { Inject, token } from '@enshou/di'
+import { HttpException, Inject } from '@enshou/core'
 import { getConnInfo } from 'hono/bun'
 
 import { REDIS } from '#/lib/redis'
@@ -15,9 +14,8 @@ import {
   getRateLimitAnonShortenKey,
 } from './config'
 
-@Inject(REDIS)
-export class RateLimitShortenMiddleware implements Middleware {
-  constructor(private redis: RedisClient) {}
+export class RateLimitShortenMiddleware implements EnshouMiddleware {
+  @Inject(REDIS) redis!: RedisClient
 
   handle: MiddlewareHandler = async (c, next) => {
     const connectionAddress = getConnInfo(c).remote.address!
@@ -29,8 +27,9 @@ export class RateLimitShortenMiddleware implements Middleware {
 
     const requestBody = await c.req.json()
     const retryAfter = await this.redis.ttl(redisKey)
-    if (requestsCount > 5 && !requestBody.googleReCaptcha)
-      throw new RestException(429, { headers: { 'Retry-After': retryAfter } })
+    if (requestsCount > 5 && !requestBody.googleReCaptcha) {
+      throw new HttpException(429, { headers: { 'Retry-After': retryAfter } })
+    }
 
     const verifyData = new URLSearchParams()
     verifyData.append('secret', Bun.env.GOOGLE_RECAPTCHA_SECRET)
@@ -49,8 +48,8 @@ export class RateLimitShortenMiddleware implements Middleware {
 
     if (success && score! > 0.5) return next()
 
-    throw new RestException(429, { headers: { 'Retry-After': retryAfter } })
+    throw new HttpException(429, { headers: { 'Retry-After': retryAfter } })
   }
 }
 
-export const RATE_LIMIT_SHORTEN_MIDDLEWARE = token(RateLimitShortenMiddleware)
+export const RATE_LIMIT_SHORTEN_MIDDLEWARE = Symbol() as Token<RateLimitShortenMiddleware>

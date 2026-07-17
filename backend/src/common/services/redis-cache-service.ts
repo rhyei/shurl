@@ -1,14 +1,14 @@
+import type { Token } from '@enshou/core'
 import type { RedisClient } from 'bun'
 
-import { token, Inject } from '@enshou/di'
+import { Inject } from '@enshou/core'
 
 import type { CacheService } from '#/common/interfaces/cache-service'
 
 import { REDIS } from '#/lib/redis'
 
-@Inject(REDIS)
 export class RedisCacheService implements CacheService {
-  constructor(private readonly redis: RedisClient) {}
+  @Inject(REDIS) redis!: RedisClient
 
   async get<Value>(key: string): Promise<Value | null> {
     try {
@@ -62,4 +62,4 @@ export class RedisCacheService implements CacheService {
   }
 }
 
-export const CACHE_SERVICE = token(RedisCacheService)
+export const CACHE_SERVICE = Symbol() as Token<CacheService>

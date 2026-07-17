@@ -1,18 +1,16 @@
-import type { EnshouErrorHandler, HonoErrorHandler } from '@enshou/core'
+import type { EnshouErrorHandler } from '@enshou/core'
 import type { Logger } from '@logtape/logtape'
 
-import { RestException } from '@enshou/core'
-import { Inject } from '@enshou/di'
+import { HttpException, Inject } from '@enshou/core'
 
 import { LOGGER } from '#/lib/logger'
 
-@Inject(LOGGER)
 export class ErrorHandler implements EnshouErrorHandler {
-  constructor(private readonly logger: Logger) {}
+  @Inject(LOGGER) logger!: Logger
 
-  handle: HonoErrorHandler = (error) => {
-    if (error instanceof RestException) return error.getResponse()
+  handle = (error: Error) => {
+    if (error instanceof HttpException) return error.getResponse()
     this.logger.error('{requestId} {error}', { error })
-    return new RestException(505).getResponse()
+    return new HttpException(505).getResponse()
   }
 }

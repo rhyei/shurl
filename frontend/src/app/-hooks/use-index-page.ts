@@ -17,7 +17,9 @@ import { useField } from '#/hooks/use-field'
 const UrlFieldSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.transform((input) => (/^https?:\/\//i.test(input) ? input : `https://${input}`)),
+  v.transform((input) => {
+    return /^https?:\/\//i.test(input) ? input : `https://${input}`
+  }),
   v.url('validation.invalid-url'),
 )
 
@@ -60,9 +62,9 @@ export function useShortenPage() {
     }
 
     try {
-      const googleReCaptchaToken = await googleReCaptcha
-        .executeV3?.('shorten')
-        .catch(() => undefined)
+      const googleReCaptchaToken = await googleReCaptcha.executeV3?.('shorten').catch(() => {
+        return undefined
+      })
 
       const shortenResponse = await shortenMutation.mutateAsync({
         body: {
@@ -75,10 +77,12 @@ export function useShortenPage() {
       urlField.setError('')
     } catch (error) {
       if (!isAxiosError(error)) throw error
-      if (error.code === AxiosError.ERR_NETWORK && window.navigator.onLine)
+      if (error.code === AxiosError.ERR_NETWORK && window.navigator.onLine) {
         urlField.setError('error.network')
-      if (error.code === AxiosError.ERR_NETWORK && !window.navigator.onLine)
+      }
+      if (error.code === AxiosError.ERR_NETWORK && !window.navigator.onLine) {
         urlField.setError('error.offline')
+      }
       if (error.status === 429) return urlField.setError('error.ratelimit')
       if (error.status! < 200 || error.status! >= 300) urlField.setError('error.server')
     }
@@ -91,7 +95,11 @@ export function useShortenPage() {
   const url = urlField.watch()
   const isShortened = url === shortenMutation.data?.shortUrl && shortenMutation.isSuccess
 
-  useEffect(() => () => clearTimeout(timeoutRef.current), [])
+  useEffect(() => {
+    return () => {
+      return clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   return {
     state: {

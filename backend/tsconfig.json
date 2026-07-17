@@ -1,18 +1,11 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
     "lib": ["ESNext"],
-    "moduleResolution": "bundler",
-    "composite": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": { "#/*": ["./src/*"] },
-    "types": ["bun"],
-    "strict": true
-  },
-  "include": ["src/**/*", "scripts/**/*", "env.d.ts", "drizzle.config.ts"]
+    "paths": {
+      "#/shared/*": ["../shared/src/*"],
+      "#/*": ["./src/*"]
+    },
+    "types": ["bun"]
+  }
 }
